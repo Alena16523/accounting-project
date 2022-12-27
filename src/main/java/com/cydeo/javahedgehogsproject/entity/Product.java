@@ -20,4 +20,6 @@ public class Product extends BaseEntity {
     private ProductUnit productUnit;
     @ManyToOne
     private Category category;
+
+
 }
