@@ -16,10 +16,10 @@ import javax.persistence.*;
 public class User extends BaseEntity {
 
     @Column(unique = true)
-    private String userName;
+    private String username;
     private String password;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     private String phone;
     private boolean enabled;
     @ManyToOne(fetch = FetchType.LAZY)
