@@ -18,7 +18,6 @@ public class Product extends BaseEntity {
     private int lowLimitAlert;
     @Enumerated(EnumType.STRING)
     private ProductUnit productUnit;
-    //@ManyToOne
-    //@JoinColumn(name = "category")
-    //private Category category;
+    @ManyToOne
+    private Category category;
 }
