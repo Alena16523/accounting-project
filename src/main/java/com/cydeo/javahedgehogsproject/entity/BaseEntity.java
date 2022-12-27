@@ -27,6 +27,6 @@ public class BaseEntity {
     private LocalDateTime LastUpdateDateTime;
     @Column(nullable = false)
     private Long lastUpdateUserId;
-    boolean isDeleted = false;
+    private boolean isDeleted = false;
 
 }
