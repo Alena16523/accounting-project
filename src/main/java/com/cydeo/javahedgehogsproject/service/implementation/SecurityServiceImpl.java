@@ -1,6 +1,7 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 //import com.cydeo.javahedgehogsproject.dto.UserDto;
+import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.User;
 import com.cydeo.javahedgehogsproject.entity.common.UserPrincipal;
 import com.cydeo.javahedgehogsproject.repository.UserRepository;
@@ -31,10 +32,10 @@ public class SecurityServiceImpl implements SecurityService {
         return new UserPrincipal(user);
     }
 
-//    @Override
-//    public UserDto getLoggedInUser() {
-//        var currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-//        return userService.findByUsername(currentUsername);
-//    }
+    @Override
+    public UserDto getLoggedInUser() {
+        var currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.findByUsername(currentUsername);
+    }
 
 }

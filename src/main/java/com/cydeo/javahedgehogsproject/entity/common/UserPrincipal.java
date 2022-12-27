@@ -1,5 +1,7 @@
 package com.cydeo.javahedgehogsproject.entity.common;
 
+import com.cydeo.javahedgehogsproject.entity.User;
+import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
