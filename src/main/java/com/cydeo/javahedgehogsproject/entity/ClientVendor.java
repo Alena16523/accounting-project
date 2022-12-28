@@ -27,13 +27,4 @@ public class ClientVendor extends BaseEntity{
     @ManyToOne
     Company company;
 
-
-
-
-
-
-
-
-
-
 }
