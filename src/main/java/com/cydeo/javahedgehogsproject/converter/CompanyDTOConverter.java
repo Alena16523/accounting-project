@@ -7,7 +7,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CompanyDTOConverter implements Converter <String, CompanyDTO> {
+public class CompanyDTOConverter implements Converter<String, CompanyDTO> {
     CompanyService companyService;
 
     public CompanyDTOConverter(@Lazy CompanyService companyService) {
@@ -19,7 +19,6 @@ public class CompanyDTOConverter implements Converter <String, CompanyDTO> {
         if (source == null || source.equals("")) {
             return null;
         }
-
 
         return companyService.findById(Long.parseLong(source));
     }
