@@ -24,4 +24,5 @@ public class InvoiceProduct extends  BaseEntity{
     private Invoice invoice;
     @ManyToOne
     private Product product;
+
 }

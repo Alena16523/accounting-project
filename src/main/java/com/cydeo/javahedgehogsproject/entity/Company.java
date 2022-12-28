@@ -23,10 +23,4 @@ public class Company extends BaseEntity {
     @OneToOne()
     private Address address;
 
-
-
-
-
-
-
 }
