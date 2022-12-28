@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyDTO {
+public class CompanyDto {
 
     private Long id;
     private String title;
