@@ -6,4 +6,5 @@ public interface UserService {
 
     UserDto findByUsername(String username);
 
+    UserDto findById(long id);
 }
