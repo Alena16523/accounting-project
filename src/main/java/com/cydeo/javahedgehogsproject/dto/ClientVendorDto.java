@@ -15,6 +15,6 @@ public class ClientVendorDto {
     private String phone;
     private String website;
     private ClientVendorType clientVendorType;
-    private AddressDTO address;
+    private AddressDto address;
     private CompanyDto company;
 }
