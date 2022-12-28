@@ -6,10 +6,10 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserDTOConverter implements Converter<String, UserDto> {
+public class UserDtoConverter implements Converter<String, UserDto> {
     UserService userService;
 
-    public UserDTOConverter(UserService userService) {
+    public UserDtoConverter(UserService userService) {
         this.userService = userService;
     }
 
