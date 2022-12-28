@@ -16,5 +16,4 @@ public class CategoryDto {
     private CompanyDto company;
     private boolean hasProduct;
 
-
 }

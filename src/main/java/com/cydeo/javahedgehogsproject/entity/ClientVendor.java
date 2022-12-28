@@ -17,13 +17,10 @@ public class ClientVendor extends BaseEntity{
     String clientVendorName;
     String phone;
     String website;
-
     @Enumerated(EnumType.STRING)
     ClientVendorType clientVendorType;
-
     @OneToOne
     Address address;
-
     @ManyToOne
     Company company;
 
