@@ -1,9 +1,9 @@
 package com.cydeo.javahedgehogsproject.service;
 
-import com.cydeo.javahedgehogsproject.dto.CompanyDTO;
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 
 public interface CompanyService {
 
-    CompanyDTO findById(Long id);
+    CompanyDto findById(Long id);
 
 }

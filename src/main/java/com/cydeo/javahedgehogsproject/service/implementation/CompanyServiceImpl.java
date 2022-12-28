@@ -1,6 +1,6 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.CompanyDTO;
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
@@ -18,8 +18,8 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public CompanyDTO findById(Long id) {
-        return mapperUtil.convert(companyRepository.findById(id), new CompanyDTO());
+    public CompanyDto findById(Long id) {
+        return mapperUtil.convert(companyRepository.findById(id), new CompanyDto());
     }
 
 }
