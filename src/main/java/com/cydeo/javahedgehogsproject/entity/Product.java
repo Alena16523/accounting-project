@@ -13,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "products")
 public class Product extends BaseEntity {
+
     private String name;
     private int quantityInStock;
     private int lowLimitAlert;
@@ -20,6 +21,5 @@ public class Product extends BaseEntity {
     private ProductUnit productUnit;
     @ManyToOne
     private Category category;
-
 
 }
