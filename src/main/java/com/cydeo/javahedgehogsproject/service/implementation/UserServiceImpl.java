@@ -7,6 +7,9 @@ import com.cydeo.javahedgehogsproject.repository.UserRepository;
 import com.cydeo.javahedgehogsproject.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -28,6 +31,19 @@ public class UserServiceImpl implements UserService {
     public UserDto findById(long id) {
         User user = userRepository.findById(id).get();
         return mapperUtil.convert(user, new UserDto());
+    }
+
+    @Override
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(user -> mapperUtil.convert(user, new UserDto()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDto> findAllSortedByCompanyAndRoles() {
+
+        return null;
     }
 
 }
