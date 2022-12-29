@@ -1,11 +1,13 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.entity.ClientVendor;
+import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.ClientVendorRepository;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
-import org.springframework.data.domain.Sort;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +18,12 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     private final ClientVendorRepository clientVendorRepository;
     private final MapperUtil mapperUtil;
+    private final SecurityService securityService;
 
-    public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil) {
+    public ClientVendorServiceImpl(ClientVendorRepository clientVendorRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.clientVendorRepository = clientVendorRepository;
         this.mapperUtil = mapperUtil;
+        this.securityService = securityService;
     }
 
     @Override
@@ -29,7 +33,11 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
     @Override
     public List<ClientVendorDto> findAll() {
-        List<ClientVendor> clientVendorList = clientVendorRepository.findAll(Sort.by("clientVendorType", "clientVendorName").ascending());
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompanyOrderByClientVendorNameAscClientVendorTypeAsc(company);
+
         return clientVendorList.stream().map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto())).collect(Collectors.toList());
     }
 
