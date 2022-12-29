@@ -48,31 +48,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> findAll() {
-        UserDto user = securityService.getLoggedInUser();
-        Company loggedInCompany = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<User> all = userRepository.findAllByCompanyIsOrderByCompanyAscRoleAsc(loggedInCompany);
-
-        if (user.getRole().getDescription().equals("Root User")) {
-            return all.stream().filter(user1 -> user1.getRole().getDescription().equals("Admin"))
-                    .map(user1 -> mapperUtil.convert(user1, new UserDto()))
+        ;
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return userRepository.findAllByRoleDescription("Admin").stream()
+                    .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .peek(userDto -> userDto.setIsOnlyAdmin(isOnlyAdmin(userDto)))
                     .collect(Collectors.toList());
         } else {
-            return all.stream().map(user1 -> mapperUtil.convert(user, new UserDto())).collect(Collectors.toList());
 
+            Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+
+            return userRepository.findAllByCompany(company).stream()
+                    .map(user -> mapperUtil.convert(user, new UserDto()))
+                    .peek(userDto -> userDto.setIsOnlyAdmin(isOnlyAdmin(userDto)))
+                    .collect(Collectors.toList());
         }
+
     }
 
-//    @Override
-//    public List<UserDto> findAll() {
-//        UserDto loggedInUserDto = securityService.getLoggedInUser();
-//        if (loggedInUserDto.getRole().getId() == 1L || loggedInUserDto.getRole().getId() == 2L) {
-//            loggedInUserDto.setIsOnlyAdmin(true);
-//        }
-//        Company loggedInCompany = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-//        return userRepository.findAllByCompany_IdIs(loggedInCompany.getId()).stream()
-//                .map(user -> mapperUtil.convert(user, new UserDto()))
-//                .collect(Collectors.toList());
-//    }
+    private Boolean isOnlyAdmin(UserDto userDto) {
+        Company company = mapperUtil.convert(userDto.getCompany(), new Company());
+        List<User> admins = userRepository.findAllByRoleDescriptionAndCompany("Admin", company);
+        return userDto.getRole().getDescription().equals("Admin") && admins.size() == 1;
+    }
 
     @Override
     public List<UserDto> findAllSortedByCompanyAndRoles() {

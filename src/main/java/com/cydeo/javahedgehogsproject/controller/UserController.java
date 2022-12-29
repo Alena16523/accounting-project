@@ -34,7 +34,7 @@ public class UserController {
 
         model.addAttribute("users", userService.findAll());
 
-        return "user/user-list";
+        return "/user/user-list";
     }
 
     @GetMapping("/create")
