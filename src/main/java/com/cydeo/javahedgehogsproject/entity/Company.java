@@ -20,7 +20,7 @@ public class Company extends BaseEntity {
     private String website;
     @Enumerated(EnumType.STRING)
     private CompanyStatus companyStatus;
-    @OneToOne()
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
 
 }
