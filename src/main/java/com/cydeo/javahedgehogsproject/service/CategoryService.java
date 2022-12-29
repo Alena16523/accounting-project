@@ -10,7 +10,7 @@ public interface CategoryService {
 
     CategoryDto findById(long id);
 
-    List<CategoryDto> listAllCategories();
+    List<CategoryDto> listAllCategoriesByUser();
 
 
 }

@@ -1,11 +1,17 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
-import com.cydeo.javahedgehogsproject.dto.RoleDto;
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
+import com.cydeo.javahedgehogsproject.entity.Company;
+import com.cydeo.javahedgehogsproject.entity.User;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CategoryRepository;
+import com.cydeo.javahedgehogsproject.repository.UserRepository;
 import com.cydeo.javahedgehogsproject.service.CategoryService;
+import com.cydeo.javahedgehogsproject.service.CompanyService;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +22,17 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MapperUtil mapperUtil;
+    private final UserRepository userRepository;
+    private final SecurityService securityService;
+    private final CompanyService companyService;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil) {
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, UserRepository userRepository, SecurityService securityService, CompanyService companyService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
+        this.userRepository = userRepository;
+        this.securityService = securityService;
+        this.companyService = companyService;
     }
 
 
@@ -30,9 +43,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> listAllCategories() {
+    public List<CategoryDto> listAllCategoriesByUser() {
         //getting all categories from DB
-        List<Category> listOfCategories=categoryRepository.findAll();
+        UserDto loggedInUser=securityService.getLoggedInUser();
+        User loggedInEntityUser=mapperUtil.convert(loggedInUser, new User());
+
+       CompanyDto companyDto= companyService.findById(loggedInEntityUser.getCompany().getId());
+       Company company=mapperUtil.convert(companyDto, new Company());
+
+        List<Category> listOfCategories=categoryRepository.findAllByCompanyId(company.getId());
+
         //converting one by one category to DTO and returning List
         return listOfCategories.stream().map(category->mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
     }
