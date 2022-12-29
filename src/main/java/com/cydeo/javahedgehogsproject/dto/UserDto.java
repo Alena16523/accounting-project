@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class UserDto {
 
     private Long id;
@@ -24,4 +23,18 @@ public class UserDto {
     private CompanyDto company;
     private Boolean isOnlyAdmin;
 
+    public UserDto(Long id, String firstname, String lastname, String username, String password, String confirmPassword, String phone, RoleDto role, CompanyDto company) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.phone = phone;
+        this.role = role;
+        this.company = company;
+        if (role.getDescription().equals("Admin")) {
+            isOnlyAdmin = true;
+        }
+    }
 }

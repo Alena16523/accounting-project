@@ -9,6 +9,7 @@ import com.cydeo.javahedgehogsproject.repository.UserRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 import com.cydeo.javahedgehogsproject.service.UserService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +22,7 @@ public class SecurityServiceImpl implements SecurityService {
     private final UserService userService;
     private final CompanyService companyService;
 
-    public SecurityServiceImpl(UserRepository userRepository, UserService userService, CompanyService companyService) {
+    public SecurityServiceImpl(UserRepository userRepository, @Lazy UserService userService, CompanyService companyService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.companyService = companyService;
