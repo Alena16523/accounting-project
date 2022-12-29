@@ -1,10 +1,11 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-//import com.cydeo.javahedgehogsproject.dto.UserDto;
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.User;
 import com.cydeo.javahedgehogsproject.entity.common.UserPrincipal;
 import com.cydeo.javahedgehogsproject.repository.UserRepository;
+import com.cydeo.javahedgehogsproject.service.CompanyService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 import com.cydeo.javahedgehogsproject.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,10 +18,12 @@ public class SecurityServiceImpl implements SecurityService {
 
     private final UserRepository userRepository;
     private final UserService userService;
+    private final CompanyService companyService;
 
-    public SecurityServiceImpl(UserRepository userRepository, UserService userService) {
+    public SecurityServiceImpl(UserRepository userRepository, UserService userService, CompanyService companyService) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.companyService = companyService;
     }
 
     @Override
@@ -36,6 +39,12 @@ public class SecurityServiceImpl implements SecurityService {
     public UserDto getLoggedInUser() {
         var currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         return userService.findByUsername(currentUsername);
+    }
+
+    @Override
+    public CompanyDto getLoggedInCompany() {
+        CompanyDto company = getLoggedInUser().getCompany();
+        return companyService.findById(company.getId());
     }
 
 }
