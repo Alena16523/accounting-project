@@ -40,7 +40,7 @@ public class CompanyController {
         return "/company/company-update";
     }
 
-    @PostMapping("/update")
+    @PostMapping("/update/{id}")
     public String editCompany(@ModelAttribute("company") CompanyDto company) {
         companyService.update(company);
         return "redirect:/companies/list";
