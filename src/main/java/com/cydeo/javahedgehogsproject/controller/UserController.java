@@ -1,5 +1,6 @@
 package com.cydeo.javahedgehogsproject.controller;
 
+import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,12 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public String listUsers(Model model){
-        model.addAttribute("users", userService.findAllSortedByCompanyAndRoles());
+    public String listUsers(Model model) {
 
-        return "fragments/left-sidebar";
+            model.addAttribute("user", userService.findAll());
+
+        return "user/user-list";
     }
+
+
 }
