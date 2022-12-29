@@ -24,20 +24,6 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/create")
-    public String createProduct(Model model){
-        model.addAttribute("newProduct",new ProductDto());
-        model.addAttribute("categories",categoryService.findAll());
-        model.addAttribute("productUnits",ProductUnit.values());
-        return "/product/product-create";
-    }
-    @PostMapping("/create")
-    public String insertProduct(@ModelAttribute("newProduct")ProductDto product,Model model){
-        model.addAttribute("categories",categoryService.findAll());
-        return "/product/product-list";
-    }
-
-
 
     @GetMapping("/list")
     public String listAllProducts(Model model){
@@ -54,12 +40,18 @@ public class ProductController {
         return "/product/product-update";
     }
 
-    @PostMapping("/update")
-    public String updateProduct(@ModelAttribute("newProduct")ProductDto product){
+    @GetMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable("id")Long id){
+        productService.delete(id);
+        return "redirect:/products/list";
 
-        productService.save(product);
-        return "redirect:/product/product-list";
+
+
     }
+
+
+
+
 
 
     }

@@ -9,6 +9,7 @@ import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,15 +37,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDto update(ProductDto product) {
-        Product product1 = productRepository.save(mapperUtil.convert(product,new Product()));
-        return mapperUtil.convert(product1,new ProductDto());
+    public void delete(Long id) {
+        Product product = productRepository.findById(id).get();
+            product.setDeleted(true);
+            productRepository.save(product);
+        }
+
+
+
     }
 
-    @Override
-    public void save(ProductDto product) {
-        productRepository.save(mapperUtil.convert(product,new Product()));
-    }
 
-
-}

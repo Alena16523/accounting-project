@@ -4,6 +4,7 @@ import com.cydeo.javahedgehogsproject.enums.ProductUnit;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
+@Where(clause = "is_deleted=false")
 public class Product extends BaseEntity {
 
     private String name;
