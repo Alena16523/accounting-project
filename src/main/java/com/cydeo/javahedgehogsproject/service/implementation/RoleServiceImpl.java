@@ -7,6 +7,9 @@ import com.cydeo.javahedgehogsproject.repository.RoleRepository;
 import com.cydeo.javahedgehogsproject.service.RoleService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class RoleServiceImpl implements RoleService {
 
@@ -23,4 +26,11 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findById(id).get();
         return mapperUtil.convert(role,new RoleDto());
     }
+
+    @Override
+    public List<RoleDto> findAll() {
+        return roleRepository.findAll().stream().map(role -> mapperUtil.convert(role, new RoleDto()))
+                .collect(Collectors.toList());
+    }
+
 }
