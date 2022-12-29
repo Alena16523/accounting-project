@@ -20,10 +20,10 @@ public class User extends BaseEntity {
     private String lastname;
     private String phone;
     private boolean enabled;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 

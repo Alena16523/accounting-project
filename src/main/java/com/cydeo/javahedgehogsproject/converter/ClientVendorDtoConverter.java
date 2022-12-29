@@ -1,5 +1,7 @@
 package com.cydeo.javahedgehogsproject.converter;
 
+import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
+import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
