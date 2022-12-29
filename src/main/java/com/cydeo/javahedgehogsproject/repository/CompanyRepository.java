@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company,Long> {
-    List<Company> findAllByIdIsNotOrderByCompanyStatus(Long id);
+    List<Company> findAllByIdIsNotOrderByCompanyStatusAscTitleAsc(Long id);
 }
