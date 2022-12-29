@@ -1,10 +1,17 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.entity.Company;
+import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -20,6 +27,12 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public CompanyDto findById(Long id) {
         return mapperUtil.convert(companyRepository.findById(id), new CompanyDto());
+    }
+
+    @Override
+    public List<CompanyDto> findAll() {
+        List<Company> companyList = companyRepository.findAll(Sort.by("companyStatus"));
+        return companyList.stream().map(company -> mapperUtil.convert(company, new CompanyDto())).collect(Collectors.toList());
     }
 
 }
