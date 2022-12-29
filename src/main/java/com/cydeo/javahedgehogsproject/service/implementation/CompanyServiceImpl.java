@@ -6,10 +6,10 @@ import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +42,25 @@ public class CompanyServiceImpl implements CompanyService {
         Company createdCompany = companyRepository.save(company);
 
         return mapperUtil.convert(createdCompany, new CompanyDto());
+    }
+
+    @Override
+    public CompanyDto update(CompanyDto companyDto) {
+        return null;
+    }
+
+    @Override
+    public void activate(Long id) {
+        Company company = companyRepository.findById(id).orElseThrow();
+        company.setCompanyStatus(CompanyStatus.ACTIVE);
+        companyRepository.save(company);
+    }
+
+    @Override
+    public void deactivate(Long id) {
+        Company company = companyRepository.findById(id).orElseThrow();
+        company.setCompanyStatus(CompanyStatus.PASSIVE);
+        companyRepository.save(company);
     }
 
 }

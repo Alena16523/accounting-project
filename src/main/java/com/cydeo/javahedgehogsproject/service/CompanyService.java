@@ -9,5 +9,8 @@ public interface CompanyService {
     CompanyDto findById(Long id);
     List<CompanyDto> findAll();
     CompanyDto create(CompanyDto companyDto);
+    CompanyDto update(CompanyDto companyDto);
+    void activate(Long id);
+    void deactivate(Long id);
 
 }
