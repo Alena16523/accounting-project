@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,9 +18,9 @@ public class UserDto {
     private String password;
     private String confirmPassword;
     private String phone;
-    @NotNull
+
     private RoleDto role;
-    @NotNull
+
     private CompanyDto company;
     private Boolean isOnlyAdmin;
 
