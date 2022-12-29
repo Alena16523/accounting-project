@@ -8,5 +8,6 @@ public interface CompanyService {
 
     CompanyDto findById(Long id);
     List<CompanyDto> findAll();
+    CompanyDto create(CompanyDto companyDto);
 
 }

@@ -1,5 +1,6 @@
 package com.cydeo.javahedgehogsproject.controller;
 
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,18 @@ public class CompanyController {
     public String getCompanyList(Model model) {
         model.addAttribute("companies", companyService.findAll());
         return "/company/company-list";
+    }
+
+    @GetMapping("/create")
+    public String createCompany(Model model) {
+        model.addAttribute("newCompany", new CompanyDto());
+        return "/company/company-create";
+    }
+
+    @PostMapping("/create")
+    public String insertCompany(@ModelAttribute("newCompany") CompanyDto company) {
+        companyService.create(company);
+        return "redirect:/companies/list";
     }
 
 }

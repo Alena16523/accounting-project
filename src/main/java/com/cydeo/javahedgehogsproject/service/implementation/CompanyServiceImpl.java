@@ -6,7 +6,6 @@ import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +32,16 @@ public class CompanyServiceImpl implements CompanyService {
     public List<CompanyDto> findAll() {
         List<Company> companyList = companyRepository.findAll(Sort.by("companyStatus"));
         return companyList.stream().map(company -> mapperUtil.convert(company, new CompanyDto())).collect(Collectors.toList());
+    }
+
+    @Override
+    public CompanyDto create(CompanyDto companyDto) {
+        companyDto.setCompanyStatus(CompanyStatus.PASSIVE);
+        Company company = mapperUtil.convert(companyDto, new Company());
+
+        Company createdCompany = companyRepository.save(company);
+
+        return mapperUtil.convert(createdCompany, new CompanyDto());
     }
 
 }
