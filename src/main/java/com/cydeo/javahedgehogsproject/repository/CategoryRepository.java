@@ -12,5 +12,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category,Long> {
 
     List<Category> findAllByCompanyId(Long id);
+    List<Category> getCategoriesByCompany(Company company);
 
 }
