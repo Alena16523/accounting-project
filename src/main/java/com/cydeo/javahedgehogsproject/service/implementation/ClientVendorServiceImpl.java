@@ -46,9 +46,9 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         clientVendorDto.setCompany(companyDto);
 
-        ClientVendor createdClientVendor= mapperUtil.convert(clientVendorDto, new ClientVendor());
+        ClientVendor createdClientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
-        ClientVendor clientVendor= clientVendorRepository.save(createdClientVendor);
+        ClientVendor clientVendor = clientVendorRepository.save(createdClientVendor);
 
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
