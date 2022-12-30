@@ -34,7 +34,7 @@ public class ProductController {
     @GetMapping("/create")
     public String createProduct(Model model) {
         model.addAttribute("newProduct", new ProductDto());
-        model.addAttribute("categories", categoryService.findAll() );
+        model.addAttribute("categories", categoryService.retrieveCategoryByCompany() );
         model.addAttribute("productUnits", ProductUnit.values());
         model.addAttribute("products", productService.listAllProducts());
 
@@ -45,7 +45,7 @@ public class ProductController {
     @PostMapping("/create")
     public String insertProduct( @ModelAttribute("newProduct") ProductDto newProduct, Model model) {
 
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("categories", categoryService.retrieveCategoryByCompany());
         model.addAttribute("productUnits", ProductUnit.values());
 
         productService.save(newProduct);

@@ -72,9 +72,6 @@ public class CategoryServiceImpl implements CategoryService {
         return listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
     }
 
-
-
-
     @Override
     public void save(CategoryDto dto) {
 
@@ -85,5 +82,6 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
 
     }
+
 
 }
