@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.dto;
 import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -25,6 +26,7 @@ public class CompanyDto {
     @NotBlank
     @Pattern(regexp = "\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")
     private String website;
+    @Valid
     @NotNull
     private AddressDto address;
     private CompanyStatus companyStatus;

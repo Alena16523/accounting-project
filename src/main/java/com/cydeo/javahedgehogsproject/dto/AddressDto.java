@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -17,6 +18,7 @@ public class AddressDto {
     @NotBlank
     @Size(max = 100, min = 2)
     private String addressLine1;
+    @NotEmpty
     @Size(max = 100)
     private String addressLine2;
     @NotBlank

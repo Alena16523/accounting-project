@@ -32,11 +32,9 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public String insertCompany(@Valid @ModelAttribute("newCompany") CompanyDto company, BindingResult bindingResult, Model model) {
+    public String insertCompany(@Valid @ModelAttribute("newCompany") CompanyDto company, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            return "/company/company-create";
-        }
+        if (bindingResult.hasErrors()) return "/company/company-create";
 
         companyService.create(company);
 
@@ -50,11 +48,9 @@ public class CompanyController {
     }
 
     @PostMapping("/update/{id}")
-    public String editCompany(@Valid @ModelAttribute("company") CompanyDto company, BindingResult bindingResult, Model model) {
+    public String editCompany(@Valid @ModelAttribute("company") CompanyDto company, BindingResult bindingResult) {
 
-        if (bindingResult.hasErrors()) {
-            return "/company/company-update";
-        }
+        if (bindingResult.hasErrors()) return "/company/company-update";
 
         companyService.update(company);
 
