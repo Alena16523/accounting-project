@@ -1,10 +1,10 @@
 package com.cydeo.javahedgehogsproject.controller;
 
+import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/clientVendors")
@@ -21,5 +21,24 @@ public class ClientVendorController {
         model.addAttribute("clientVendors", clientVendorService.findAll());
         return "/clientVendor/clientVendor-list";
     }
+
+    @GetMapping("/create")
+    public String createClientVendor(Model model){
+        model.addAttribute("newClientVendor", new ClientVendorDto());
+        return "/clientVendor/clientVendor-create";
+    }
+
+    @PostMapping("/create")
+    public String insertClientVendor(@ModelAttribute("newClientVendor")ClientVendorDto clientVendorDto){
+        clientVendorService.create(clientVendorDto);
+        return "redirect:/clientVendors/list";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id){
+        clientVendorService.deleteById(id);
+        return "redirect:/clientVendors/list";
+    }
+
 
 }

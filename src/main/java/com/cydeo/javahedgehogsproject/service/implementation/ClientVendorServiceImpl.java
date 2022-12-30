@@ -41,4 +41,19 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         return clientVendorList.stream().map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto())).collect(Collectors.toList());
     }
 
+    @Override
+    public ClientVendorDto create(ClientVendorDto clientVendorDto) {
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        clientVendorDto.setCompany(companyDto);
+        ClientVendor created= mapperUtil.convert(clientVendorDto, new ClientVendor());
+        ClientVendor clientVendor= clientVendorRepository.save(created);
+        return mapperUtil.convert(clientVendor, new ClientVendorDto());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
+        clientVendor.setDeleted(true);
+        clientVendorRepository.save(clientVendor);
+    }
 }
