@@ -2,8 +2,6 @@ package com.cydeo.javahedgehogsproject.service;
 
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
-
-
 import java.util.List;
 
 public interface CategoryService {
@@ -13,6 +11,8 @@ public interface CategoryService {
     List<CategoryDto> retrieveCategoryByCompany();
 
     List<CategoryDto> listAllCategoriesByUser();
+    void save(CategoryDto dto);
+
 
 
 }
