@@ -30,4 +30,19 @@ public class RoleServiceImpl implements RoleService {
         return mapperUtil.convert(role, new RoleDto());
     }
 
+    @Override
+    public List<RoleDto> findAll() {
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return roleRepository.findAll().stream()
+                    .filter(role -> role.getDescription().equals("Admin"))
+                    .map(role -> mapperUtil.convert(role, new RoleDto()))
+                    .collect(Collectors.toList());
+        } else {
+            return roleRepository.findAll().stream()
+                    .filter(role -> !role.getDescription().equals("Root User"))
+                    .map(role -> mapperUtil.convert(role, new RoleDto()))
+                    .collect(Collectors.toList());
+        }
+
+    }
 }

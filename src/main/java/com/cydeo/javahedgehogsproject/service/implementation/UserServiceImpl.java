@@ -1,16 +1,11 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.dto.RoleDto;
 import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.User;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.UserRepository;
-import com.cydeo.javahedgehogsproject.service.CompanyService;
-import com.cydeo.javahedgehogsproject.service.RoleService;
-import com.cydeo.javahedgehogsproject.service.SecurityService;
-import com.cydeo.javahedgehogsproject.service.UserService;
+import com.cydeo.javahedgehogsproject.service.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,5 +63,12 @@ public class UserServiceImpl implements UserService {
         return userDto.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
 
+    @Override
+    public void save(UserDto user) {
 
+        User obj = mapperUtil.convert(user, new User());
+        obj.setEnabled(true);
+        userRepository.save(obj);
+
+    }
 }
