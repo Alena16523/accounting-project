@@ -41,6 +41,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDto> findAll() {
+        return null;
+    }
+
+    @Override
     public List<CategoryDto> listAllCategoriesByUser() {
         //getting all categories from DB
 
@@ -61,6 +66,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void save(CategoryDto dto) {
 
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        dto.setCompany(companyDto);
 
         Category category = mapperUtil.convert(dto, new Category());
         categoryRepository.save(category);
