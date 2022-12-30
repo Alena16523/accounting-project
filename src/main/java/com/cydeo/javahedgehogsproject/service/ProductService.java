@@ -10,5 +10,5 @@ public interface ProductService {
     void save(ProductDto productDto);
 
     List<ProductDto> listAllProducts();
-    void update(ProductDto productDto);
+    void update(ProductDto product);
 }

@@ -12,7 +12,6 @@ public interface CategoryService {
 
     List<CategoryDto> listAllCategoriesByUser();
 
-    List<CategoryDto> listAllCategories();
 
 
 }

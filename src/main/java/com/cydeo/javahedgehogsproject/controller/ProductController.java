@@ -23,20 +23,11 @@ public class ProductController {
         this.categoryService = categoryService;
         this.productService = productService;
     }
-    @GetMapping("/list")
-    public String listProduct(Model model) {
-        model.addAttribute("newProduct", new ProductDto());
-        model.addAttribute("categories", categoryService.listAllCategories() );
-        model.addAttribute("productUnits", ProductUnit.values());
-        model.addAttribute("products", productService.listAllProducts());
-
-        return "/product/product-list";
-    }
 
     @GetMapping("/create")
     public String createProduct(Model model) {
         model.addAttribute("newProduct", new ProductDto());
-        model.addAttribute("categories", categoryService.listAllCategories() );
+        model.addAttribute("categories", categoryService.findAll() );
         model.addAttribute("productUnits", ProductUnit.values());
         model.addAttribute("products", productService.listAllProducts());
 
@@ -45,44 +36,24 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String insertProduct( @ModelAttribute("newProduct") ProductDto newProduct, BindingResult bindingResult, Model model) {
+    public String insertProduct( @ModelAttribute("newProduct") ProductDto newProduct, Model model) {
 
-        if (bindingResult.hasErrors()) {
-
-            model.addAttribute("categories", categoryService.listAllCategories());
+            model.addAttribute("categories", categoryService.findAll());
             model.addAttribute("productUnits", ProductUnit.values());
-            return "/product/product-create";
 
-        }
         productService.save(newProduct);
         return "redirect:/products/list";
     }
 
-    @GetMapping("/update/{id}")
-    public String editProduct(@PathVariable("id")Long id, Model model){
-        model.addAttribute("product",productService.findById(id));
-        model.addAttribute("categories",categoryService.listAllCategories());
-        model.addAttribute("productUnits", ProductUnit.values());
-        return "/product/product-update";
-    }
 
     @PostMapping("/update/{id}")
-    public String updateProduct( @ModelAttribute("product") ProductDto product, BindingResult bindingResult, Model model) {
+    public String updateProduct( @ModelAttribute("product") ProductDto product, Model model) {
 
-        if (bindingResult.hasErrors()) {
-
-            model.addAttribute("products", productService.listAllProducts());
-            model.addAttribute("categories",categoryService.listAllCategories());
-            model.addAttribute("productUnits", ProductUnit.values());
-
-            return "/task/update";
-
-        }
-
+          model.addAttribute("categories",categoryService.findAll());
+          model.addAttribute("productUnits", ProductUnit.values());
         productService.update(product);
-
         return "redirect:/products/list";
-
     }
+
     }
 

@@ -54,15 +54,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDto productDto) {
-        Product product = productRepository.findById(productDto.getId()).get();
-        ProductDto convertedProduct  = mapperUtil.convert(product, new ProductDto());
+        Product product1 = productRepository.save(mapperUtil.convert(productDto, new Product()));
+        mapperUtil.convert(product1, new ProductDto());
 
-//        if(task.isPresent()){
-//            convertedTask.setTaskStatus(dto.getTaskStatus() == null ? task.get().getTaskStatus() : dto.getTaskStatus());
-//            convertedTask.setAssignedDate(task.get().getAssignedDate());
-//            taskRepository.save(convertedTask);
-//        }
     }
+
+//    @Override
+//    public ProductDto update(ProductDto product) {
+//        Product product1 = productRepository.save(mapperUtil.convert(product, new Product()));
+//        return mapperUtil.convert(product1, new ProductDto());
+//
+//    }
 
 
 }
