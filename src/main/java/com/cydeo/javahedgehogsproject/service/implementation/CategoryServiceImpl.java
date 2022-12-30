@@ -2,9 +2,11 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
+import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CategoryRepository;
 import com.cydeo.javahedgehogsproject.service.CategoryService;
@@ -43,6 +45,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDto> retrieveCategoryByCompany() {
+
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        Company company1 = mapperUtil.convert(companyDto, new Company());
+        List<Category> categoryList = categoryRepository.getCategoriesByCompany(company1);
+        return categoryList.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
+
+    }
+
+    @Override
     public List<CategoryDto> listAllCategoriesByUser() {
         //getting all categories from DB
 
@@ -60,5 +72,19 @@ public class CategoryServiceImpl implements CategoryService {
         return listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
     }
 
-}
 
+
+
+    @Override
+    public void save(CategoryDto dto) {
+
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        dto.setCompany(companyDto);
+
+        Category category = mapperUtil.convert(dto, new Category());
+        categoryRepository.save(category);
+
+    }
+
+
+}
