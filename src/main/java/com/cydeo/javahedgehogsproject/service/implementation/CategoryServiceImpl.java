@@ -2,7 +2,6 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -11,7 +10,6 @@ import com.cydeo.javahedgehogsproject.service.CategoryService;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 import com.cydeo.javahedgehogsproject.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,4 +57,16 @@ public class CategoryServiceImpl implements CategoryService {
         //converting one by one category to DTO and returning List
         return listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
     }
+
+    @Override
+    public void save(CategoryDto dto) {
+
+
+        Category category = mapperUtil.convert(dto, new Category());
+        categoryRepository.save(category);
+
+    }
+
+
+
 }
