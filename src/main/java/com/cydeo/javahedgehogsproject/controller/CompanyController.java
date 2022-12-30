@@ -4,7 +4,10 @@ import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/companies")
@@ -29,8 +32,12 @@ public class CompanyController {
     }
 
     @PostMapping("/create")
-    public String insertCompany(@ModelAttribute("newCompany") CompanyDto company) {
+    public String insertCompany(@Valid @ModelAttribute("newCompany") CompanyDto company, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) return "/company/company-create";
+
         companyService.create(company);
+
         return "redirect:/companies/list";
     }
 
@@ -41,8 +48,12 @@ public class CompanyController {
     }
 
     @PostMapping("/update/{id}")
-    public String editCompany(@ModelAttribute("company") CompanyDto company) {
+    public String editCompany(@Valid @ModelAttribute("company") CompanyDto company, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) return "/company/company-update";
+
         companyService.update(company);
+
         return "redirect:/companies/list";
     }
 
