@@ -82,4 +82,14 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public void update(UserDto user) {
+
+//        User dbUser = userRepository.findByUsername(user.getUsername());
+        User convertedUser = mapperUtil.convert(user, new User());
+//        convertedUser.setId(dbUser.getId());
+        userRepository.save(convertedUser);
+
+    }
+
 }

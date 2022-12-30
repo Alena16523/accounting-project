@@ -13,4 +13,6 @@ public interface UserService {
     List<UserDto> findAll();
 
     void save(UserDto user);
+
+    void update(UserDto user);
 }

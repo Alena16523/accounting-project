@@ -8,10 +8,10 @@ import com.cydeo.javahedgehogsproject.service.UserService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -22,7 +22,7 @@ public class UserController {
     private final UserService userService;
     private final SecurityService securityService;
 
-    public UserController(RoleService roleService, CompanyService companyService, UserService userService,@Lazy SecurityService securityService) {
+    public UserController(RoleService roleService, CompanyService companyService, UserService userService, @Lazy SecurityService securityService) {
         this.roleService = roleService;
         this.companyService = companyService;
         this.userService = userService;
@@ -54,4 +54,16 @@ public class UserController {
         return "redirect:/users/list";
 
     }
+
+    @GetMapping("/update/{id}")
+    public String editUser(@PathVariable("id") long id, Model model) {
+
+        model.addAttribute("user", userService.findById(id));
+        model.addAttribute("userRoles", roleService.findAll());
+        model.addAttribute("companies", companyService.findAllByUsers());
+
+        return "/user/user-update";
+
+    }
+
 }
