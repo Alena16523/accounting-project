@@ -46,17 +46,17 @@
                                                                             Edit
                                                                         </button>
                                                                     </a>
-                                                                    <span th:if="${category.hasProduct}"
+                                                                    <span th:if="${category.isHasProduct()!=true}"
                                                                           class="d-inline-block" tabindex="0"
                                                                           data-toggle="tooltip"
                                                                           data-placement="right"
                                                                           title="Can not be deleted! This category has product/products.">
                                                                         <button
                                                                                 class="btn btn-danger mb-2 ml-2 mb-sm-0 mr-sm-2"
-                                                                                style="pointer-events: none;" disabled>Delete
+                                                                                style="pointer-events: none;" disabled > Delete
                                                                         </button>
                                                                     </span>
-                                                                    <a th:unless="${category.hasProduct}"
+                                                                    <a th:unless ="${category.isHasProduct()!=true}"
                                                                        th:href="@{/categories/delete/{id}(id=${category.getId()})}"
                                                                        type="button">
                                                                         <button class="btn btn-danger mb-2 ml-2 mb-sm-0 mr-sm-2">
