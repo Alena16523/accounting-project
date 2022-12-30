@@ -70,6 +70,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     public void deleteById(Long id) {
         ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
         clientVendor.setDeleted(true);
+
         clientVendorRepository.save(clientVendor);
     }
 
