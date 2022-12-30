@@ -1,11 +1,13 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.dto.RoleDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +18,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final MapperUtil mapperUtil;
+    private final SecurityService securityService;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil) {
+
+    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.companyRepository = companyRepository;
         this.mapperUtil = mapperUtil;
+        this.securityService = securityService;
     }
 
     @Override
@@ -68,5 +73,6 @@ public class CompanyServiceImpl implements CompanyService {
         company.setCompanyStatus(CompanyStatus.PASSIVE);
         companyRepository.save(company);
     }
+
 
 }
