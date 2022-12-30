@@ -18,9 +18,7 @@ public class UserDto {
     private String password;
     private String confirmPassword;
     private String phone;
-
     private RoleDto role;
-
     private CompanyDto company;
     private Boolean isOnlyAdmin;
 

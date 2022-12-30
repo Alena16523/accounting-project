@@ -22,12 +22,10 @@ public class User extends BaseEntity {
     private String lastname;
     private String phone;
     private boolean enabled;
-
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
-    
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 

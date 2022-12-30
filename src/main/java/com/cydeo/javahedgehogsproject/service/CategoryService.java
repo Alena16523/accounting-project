@@ -9,6 +9,7 @@ import java.util.List;
 public interface CategoryService {
 
     CategoryDto findById(long id);
+    List<CategoryDto>findAll();
 
     List<CategoryDto> listAllCategoriesByUser();
 

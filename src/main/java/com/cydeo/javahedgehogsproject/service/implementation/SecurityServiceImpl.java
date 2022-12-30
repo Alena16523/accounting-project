@@ -1,6 +1,5 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-//import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.User;
