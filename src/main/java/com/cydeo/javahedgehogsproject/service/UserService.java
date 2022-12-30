@@ -7,4 +7,5 @@ public interface UserService {
     UserDto findByUsername(String username);
 
     UserDto findById(long id);
+    void save(UserDto user);
 }

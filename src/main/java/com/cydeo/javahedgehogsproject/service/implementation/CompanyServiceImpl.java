@@ -6,6 +6,7 @@ import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CompanyRepository;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +17,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository companyRepository;
     private final MapperUtil mapperUtil;
+    private final SecurityService securityService;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil) {
+    public CompanyServiceImpl(CompanyRepository companyRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.companyRepository = companyRepository;
         this.mapperUtil = mapperUtil;
+        this.securityService = securityService;
     }
 
     @Override
@@ -67,6 +70,24 @@ public class CompanyServiceImpl implements CompanyService {
         Company company = companyRepository.findById(id).orElseThrow();
         company.setCompanyStatus(CompanyStatus.PASSIVE);
         companyRepository.save(company);
+    }
+
+    @Override
+    public List<CompanyDto> findAllByUsers() {
+        CompanyDto loggedInCompany = securityService.getLoggedInCompany();
+
+        if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
+            return companyRepository.findAll().stream()
+                    .filter(company -> !company.getTitle().equals(loggedInCompany.getTitle()))
+                    .map(company -> mapperUtil.convert(company, new CompanyDto()))
+                    .collect(Collectors.toList());
+        } else {
+            return companyRepository.findAll().stream()
+                    .filter(company -> company.getTitle().equals(loggedInCompany.getTitle()))
+                    .map(company -> mapperUtil.convert(company, new CompanyDto()))
+                    .collect(Collectors.toList());
+        }
+
     }
 
 }

@@ -12,5 +12,5 @@ public interface CompanyService {
     CompanyDto update(CompanyDto companyDto);
     void activate(Long id);
     void deactivate(Long id);
-
+    List<CompanyDto> findAllByUsers();
 }
