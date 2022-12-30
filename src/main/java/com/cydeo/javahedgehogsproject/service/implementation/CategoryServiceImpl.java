@@ -43,6 +43,8 @@ public class CategoryServiceImpl implements CategoryService {
         return mapperUtil.convert(category, new CategoryDto());
     }
 
+  
+
     @Override
     public List<CategoryDto> retrieveCategoryByCompany() {
 
@@ -75,6 +77,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void save(CategoryDto dto) {
 
+        CompanyDto companyDto = securityService.getLoggedInCompany();
+        dto.setCompany(companyDto);
 
         Category category = mapperUtil.convert(dto, new Category());
         categoryRepository.save(category);
