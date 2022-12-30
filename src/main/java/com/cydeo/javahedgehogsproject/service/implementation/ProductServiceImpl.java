@@ -48,8 +48,19 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    @Override
+    public void save(ProductDto productDto) {
+        productDto.setQuantityInStock(0);
+        Product product = mapperUtil.convert(productDto, new Product());
+        productRepository.save(product);
+    }
 
+    @Override
+    public void update(ProductDto productDto) {
+        Product product1 = productRepository.save(mapperUtil.convert(productDto, new Product()));
+        mapperUtil.convert(product1, new ProductDto());
 
+    }
 
 }
 

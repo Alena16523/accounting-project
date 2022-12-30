@@ -13,6 +13,7 @@ import com.cydeo.javahedgehogsproject.service.CategoryService;
 import com.cydeo.javahedgehogsproject.service.CompanyService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 import com.cydeo.javahedgehogsproject.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,8 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
         return mapperUtil.convert(category, new CategoryDto());
     }
 
-  
-
     @Override
     public List<CategoryDto> retrieveCategoryByCompany() {
 
@@ -72,7 +71,6 @@ public class CategoryServiceImpl implements CategoryService {
         //converting one by one category to DTO and returning List
         return listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
     }
-
 
     @Override
     public void save(CategoryDto dto) {
