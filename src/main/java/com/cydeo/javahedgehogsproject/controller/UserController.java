@@ -20,13 +20,11 @@ public class UserController {
     private final RoleService roleService;
     private final CompanyService companyService;
     private final UserService userService;
-    private final SecurityService securityService;
 
-    public UserController(RoleService roleService, CompanyService companyService, UserService userService, @Lazy SecurityService securityService) {
+    public UserController(RoleService roleService, CompanyService companyService, UserService userService) {
         this.roleService = roleService;
         this.companyService = companyService;
         this.userService = userService;
-        this.securityService = securityService;
     }
 
     @GetMapping("/list")
@@ -37,40 +35,4 @@ public class UserController {
         return "/user/user-list";
     }
 
-    @GetMapping("/create")
-    public String createUser(Model model) {
-        model.addAttribute("newUser", new UserDto());
-        model.addAttribute("userRoles", roleService.findAll());
-        model.addAttribute("companies", companyService.findAllByUsers());
-
-        return "user/user-create";
-    }
-
-    @PostMapping("/create")
-    public String insertUser(@ModelAttribute("newUser") UserDto user) {
-
-        userService.save(user);
-
-        return "redirect:/users/list";
-
-    }
-
-    @GetMapping("/update/{id}")
-    public String editUser(@PathVariable("id") long id, Model model) {
-
-        model.addAttribute("user", userService.findById(id));
-        model.addAttribute("userRoles", roleService.findAll());
-        model.addAttribute("companies", companyService.findAllByUsers());
-
-        return "/user/user-update";
-
-    }
-    @PostMapping("/update/{id}")
-    public String updateUser(@ModelAttribute("user") UserDto user) {
-
-        userService.update(user);
-
-        return "redirect:/users/list";
-
-    }
 }

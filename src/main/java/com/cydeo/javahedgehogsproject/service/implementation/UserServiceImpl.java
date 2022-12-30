@@ -21,16 +21,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final MapperUtil mapperUtil;
-    private final RoleService roleService;
-    private final CompanyService companyService;
     private final SecurityService securityService;
 
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, RoleService roleService, CompanyService companyService, SecurityService securityService) {
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, SecurityService securityService) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
-        this.roleService = roleService;
-        this.companyService = companyService;
         this.securityService = securityService;
     }
 
@@ -72,25 +68,5 @@ public class UserServiceImpl implements UserService {
         return userDto.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
 
-
-    @Override
-    public void save(UserDto user) {
-
-        User obj = mapperUtil.convert(user, new User());
-        obj.setEnabled(true);
-        userRepository.save(obj);
-
-    }
-
-    @Override
-    public void update(UserDto user) {
-
-        User dbUser = userRepository.findById(user.getId()).get();
-        User convertedUser = mapperUtil.convert(user, new User());
-        convertedUser.setId(dbUser.getId());
-        convertedUser.setPassword(dbUser.getPassword());
-        convertedUser.setEnabled(dbUser.isEnabled());
-        userRepository.save(convertedUser);
-    }
 
 }
