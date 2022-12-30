@@ -1,7 +1,6 @@
 package com.cydeo.javahedgehogsproject.controller;
 
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
-import com.cydeo.javahedgehogsproject.enums.ClientVendorType;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,16 +23,30 @@ public class ClientVendorController {
     }
 
     @GetMapping("/create")
-    public String createClientVendor(Model model){
+    public String createClientVendor(Model model) {
         model.addAttribute("newClientVendor", new ClientVendorDto());
-//        model.addAttribute("clientVendorTypes", ClientVendorType.values());
+//        model.addAttribute("clientVendorTypes", );
 //        model.addAttribute("countries",);
         return "/clientVendor/clientVendor-create";
     }
 
     @PostMapping("/create")
-    public String insertClientVendor(@ModelAttribute("newClientVendor")ClientVendorDto clientVendorDto){
+    public String insertClientVendor(@ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto) {
         clientVendorService.create(clientVendorDto);
+        return "redirect:/clientVendors/list";
+    }
+
+    @GetMapping("/update/{id}")
+    public String updateClientVendor(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("clientVendor", clientVendorService.findById(id));
+//        model.addAttribute("clientVendorTypes", );
+//        model.addAttribute("countries", );
+        return "/clientVendor/clientVendor-update";
+    }
+
+    @PostMapping("/update/{id}")
+    public String editClientVendor(@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto) {
+        clientVendorService.update(clientVendorDto);
         return "redirect:/clientVendors/list";
     }
 
@@ -42,6 +55,5 @@ public class ClientVendorController {
         clientVendorService.deleteById(id);
         return "redirect:/clientVendors/list";
     }
-
 
 }

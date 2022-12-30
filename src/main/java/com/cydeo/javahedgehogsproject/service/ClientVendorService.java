@@ -9,7 +9,7 @@ public interface ClientVendorService {
     ClientVendorDto findById (Long id);
     List<ClientVendorDto> findAll();
     ClientVendorDto create(ClientVendorDto clientVendorDto);
+    ClientVendorDto update(ClientVendorDto clientVendorDto);
     void deleteById(Long id);
-
 
 }

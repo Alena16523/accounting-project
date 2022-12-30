@@ -51,9 +51,15 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     }
 
     @Override
+    public ClientVendorDto update(ClientVendorDto clientVendorDto) {
+        return null;
+    }
+
+    @Override
     public void deleteById(Long id) {
         ClientVendor clientVendor = clientVendorRepository.findById(id).orElseThrow();
         clientVendor.setDeleted(true);
         clientVendorRepository.save(clientVendor);
     }
+
 }

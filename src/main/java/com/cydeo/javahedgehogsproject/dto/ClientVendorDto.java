@@ -17,4 +17,5 @@ public class ClientVendorDto {
     private ClientVendorType clientVendorType;
     private AddressDto address;
     private CompanyDto company;
+
 }
