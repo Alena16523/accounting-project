@@ -2,6 +2,7 @@ package com.cydeo.javahedgehogsproject.controller;
 
 
 
+import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.enums.ProductUnit;
 import com.cydeo.javahedgehogsproject.service.CategoryService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
@@ -30,6 +31,27 @@ public class ProductController {
         return "/product/product-list";
     }
 
+    @GetMapping("/create")
+    public String createProduct(Model model) {
+        model.addAttribute("newProduct", new ProductDto());
+        model.addAttribute("categories", categoryService.retrieveCategoryByCompany() );
+        model.addAttribute("productUnits", ProductUnit.values());
+        model.addAttribute("products", productService.listAllProducts());
+
+
+        return "/product/product-create";
+    }
+
+    @PostMapping("/create")
+    public String insertProduct( @ModelAttribute("newProduct") ProductDto newProduct, Model model) {
+
+        model.addAttribute("categories", categoryService.retrieveCategoryByCompany());
+        model.addAttribute("productUnits", ProductUnit.values());
+
+        productService.save(newProduct);
+        return "redirect:/products/list";
+    }
+
 
     @GetMapping("update/{id}")
     public String editProduct(@PathVariable ("id")Long id,Model model){
@@ -38,6 +60,16 @@ public class ProductController {
         model.addAttribute("productUnits", ProductUnit.values());
         return "/product/product-update";
     }
+
+    @PostMapping("/update/{id}")
+    public String updateProduct(@ModelAttribute("product") ProductDto product, Model model) {
+
+        model.addAttribute("categories",categoryService.retrieveCategoryByCompany());
+        model.addAttribute("productUnits", ProductUnit.values());
+        productService.update(product);
+        return "redirect:/products/list";
+    }
+
 
 
     @GetMapping("/delete/{id}")
@@ -49,9 +81,5 @@ public class ProductController {
 
     }
 
-
-    
     }
-
-
 
