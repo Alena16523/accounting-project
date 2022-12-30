@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
+@Where(clause = "is_deleted=false")
 public class User extends BaseEntity {
 
     @Column(unique = true)
