@@ -71,4 +71,16 @@ public class UserServiceImpl implements UserService {
         userRepository.save(obj);
 
     }
+
+    @Override
+    public void update(UserDto user) {
+
+        User dbUser = userRepository.findById(user.getId()).get();
+        User convertedUser = mapperUtil.convert(user, new User());
+        convertedUser.setId(dbUser.getId());
+        convertedUser.setPassword(dbUser.getPassword());
+        convertedUser.setEnabled(dbUser.isEnabled());
+        userRepository.save(convertedUser);
+    }
+
 }

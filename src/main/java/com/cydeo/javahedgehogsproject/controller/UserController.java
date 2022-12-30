@@ -48,4 +48,24 @@ public class UserController {
         return "redirect:/users/list";
 
     }
+
+    @GetMapping("/update/{id}")
+    public String editUser(@PathVariable("id") long id, Model model) {
+
+        model.addAttribute("user", userService.findById(id));
+        model.addAttribute("userRoles", roleService.findAll());
+        model.addAttribute("companies", companyService.findAllByUsers());
+
+        return "/user/user-update";
+
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateUser(@ModelAttribute("user") UserDto user) {
+
+        userService.update(user);
+
+        return "redirect:/users/list";
+
+    }
 }
