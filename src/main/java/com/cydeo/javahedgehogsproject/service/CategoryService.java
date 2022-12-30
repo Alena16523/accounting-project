@@ -13,6 +13,8 @@ public interface CategoryService {
     List<CategoryDto> listAllCategoriesByUser();
     void save(CategoryDto dto);
 
+    void delete(Long id);
+
 
 
 
