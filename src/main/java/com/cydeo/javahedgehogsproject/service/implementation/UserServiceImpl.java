@@ -72,11 +72,6 @@ public class UserServiceImpl implements UserService {
         return userDto.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
 
-    @Override
-    public List<UserDto> findAllSortedByCompanyAndRoles() {
-
-        return null;
-    }
 
     @Override
     public void save(UserDto user) {

@@ -12,7 +12,5 @@ public interface UserService {
 
     List<UserDto> findAll();
 
-    List<UserDto> findAllSortedByCompanyAndRoles();
-
     void save(UserDto user);
 }

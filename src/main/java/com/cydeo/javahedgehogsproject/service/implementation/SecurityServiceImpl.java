@@ -22,7 +22,7 @@ public class SecurityServiceImpl implements SecurityService {
     private final UserService userService;
     private final CompanyService companyService;
 
-    public SecurityServiceImpl(UserRepository userRepository, @Lazy UserService userService, CompanyService companyService) {
+    public SecurityServiceImpl(UserRepository userRepository, @Lazy UserService userService, @Lazy CompanyService companyService) {
         this.userRepository = userRepository;
         this.userService = userService;
         this.companyService = companyService;
