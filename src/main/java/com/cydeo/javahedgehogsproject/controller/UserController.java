@@ -23,6 +23,14 @@ public class UserController {
         this.companyService = companyService;
     }
 
+    @GetMapping("/list")
+    public String listUsers(Model model) {
+
+        model.addAttribute("users", userService.findAll());
+
+        return "/user/user-list";
+    }
+
     @GetMapping("/create")
     public String createUser(Model model) {
         model.addAttribute("newUser", new UserDto());
