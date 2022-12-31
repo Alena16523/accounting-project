@@ -1,7 +1,9 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+import com.cydeo.javahedgehogsproject.dto.AddressDto;
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.entity.Address;
 import com.cydeo.javahedgehogsproject.entity.ClientVendor;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -46,9 +48,9 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         clientVendorDto.setCompany(companyDto);
 
-        ClientVendor createdClientVendor= mapperUtil.convert(clientVendorDto, new ClientVendor());
+        ClientVendor createdClientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
-        ClientVendor clientVendor= clientVendorRepository.save(createdClientVendor);
+        ClientVendor clientVendor = clientVendorRepository.save(createdClientVendor);
 
         return mapperUtil.convert(clientVendor, new ClientVendorDto());
     }
@@ -57,7 +59,6 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     public ClientVendorDto update(ClientVendorDto clientVendorDto) {
         ClientVendorDto foundClientVendor = findById(clientVendorDto.getId());
         clientVendorDto.setCompany(foundClientVendor.getCompany());
-        clientVendorDto.setAddress(foundClientVendor.getAddress());
 
         ClientVendor clientVendor = mapperUtil.convert(clientVendorDto, new ClientVendor());
 
