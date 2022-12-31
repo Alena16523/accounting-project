@@ -4,7 +4,10 @@ import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/clientVendors")
@@ -31,7 +34,9 @@ public class ClientVendorController {
     }
 
     @PostMapping("/create")
-    public String insertClientVendor(@ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto) {
+    public String insertClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors())
+            return "/create/clientVendor-create";
         clientVendorService.create(clientVendorDto);
         return "redirect:/clientVendors/list";
     }
