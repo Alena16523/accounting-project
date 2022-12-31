@@ -1,19 +1,24 @@
 package com.cydeo.javahedgehogsproject.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.*;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
 
     private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @NotBlank
     @Size(max = 15, min = 2)
     private String firstname;
@@ -36,5 +41,33 @@ public class UserDto {
     @NotNull
     private CompanyDto company;
     private Boolean isOnlyAdmin;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+        checkConfirmPassword();
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+        checkConfirmPassword();
+    }
+
+    private void checkConfirmPassword() {
+        if (this.password == null || this.confirmPassword == null) {
+            return;
+        } else if (!this.password.equals(this.confirmPassword)) {
+            this.confirmPassword = null;
+        }
+    }
+
+
 
 }
