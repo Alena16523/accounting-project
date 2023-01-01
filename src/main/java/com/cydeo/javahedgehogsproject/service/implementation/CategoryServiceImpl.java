@@ -11,6 +11,7 @@ import com.cydeo.javahedgehogsproject.repository.CategoryRepository;
 import com.cydeo.javahedgehogsproject.service.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,11 +41,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(id).get();
         CategoryDto categoryDto=mapperUtil.convert(category, new CategoryDto());
 
-        productService.listAllProducts().stream()
-                .filter(productDto -> productDto.getCategory().equals(categoryDto))
-                .
-
-
         return mapperUtil.convert(category, new CategoryDto());
     }
 
@@ -73,7 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
                 each.setHasProduct(true);
             }
         }
-        return categoryDtoList;
+        return categoryDtoList.stream().sorted(Comparator.comparing(CategoryDto::getDescription)).collect(Collectors.toList());
     }
 
     @Override
@@ -87,12 +83,39 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryDto update(CategoryDto categoryDto) {
+
+        //getting category from DB with the same id
+        Category category=categoryRepository.findById(categoryDto.getId()).get();
+        //setting its description to a new description
+        category.setDescription(categoryDto.getDescription());
+        //saving any changes back to DB
+        categoryRepository.save(category);
+
+        return mapperUtil.convert(category, new CategoryDto());
+    }
+
+    @Override
     public void delete(Long id) {
 
         Category category = categoryRepository.findById(id).get();
         category.setDeleted(true);
         categoryRepository.save(category);
 
+    }
+
+    @Override
+    public CategoryDto findCategoryById(Long id) {
+
+        Category category=categoryRepository.getCategoryById(id).get();
+
+        return mapperUtil.convert(category, new CategoryDto());
+    }
+
+    @Override
+    public boolean hasProduct(Long id) {
+        //checking if category has more than 0 products
+        return productService.findAllProductsByCategoryId(id).size()>0;
     }
 
 

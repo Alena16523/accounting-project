@@ -59,9 +59,23 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void update(ProductDto productDto) {
+
+        Product product=productRepository.findById(productDto.getId()).get();
+        int quantityInStock=product.getQuantityInStock();
+
+        productDto.setQuantityInStock(quantityInStock);
+
         Product product1 = productRepository.save(mapperUtil.convert(productDto, new Product()));
         mapperUtil.convert(product1, new ProductDto());
 
+    }
+
+    @Override
+    public List<ProductDto> findAllProductsByCategoryId(Long id) {
+
+        List<Product> listOfProductsPerCategory=productRepository.findAllByCategoryId(id);
+
+        return listOfProductsPerCategory.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
 
 }

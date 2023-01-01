@@ -2,6 +2,8 @@ package com.cydeo.javahedgehogsproject.service;
 
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
+import com.cydeo.javahedgehogsproject.entity.Category;
+
 import java.util.List;
 
 public interface CategoryService {
@@ -14,7 +16,13 @@ public interface CategoryService {
 
     void save(CategoryDto dto);
 
+    CategoryDto update(CategoryDto categoryDto);
+
     void delete(Long id);
+
+    CategoryDto findCategoryById(Long id);
+
+    boolean hasProduct(Long id);
 
 
 
