@@ -3,17 +3,12 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.ProductDto;
-import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CategoryRepository;
-import com.cydeo.javahedgehogsproject.service.CategoryService;
-import com.cydeo.javahedgehogsproject.service.CompanyService;
-import com.cydeo.javahedgehogsproject.service.SecurityService;
-import com.cydeo.javahedgehogsproject.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.cydeo.javahedgehogsproject.service.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,20 +22,29 @@ public class CategoryServiceImpl implements CategoryService {
     private final UserService userService;
     private final SecurityService securityService;
     private final CompanyService companyService;
+    private final ProductService productService;
 
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, UserService userService, SecurityService securityService, CompanyService companyService) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, UserService userService, SecurityService securityService, CompanyService companyService, ProductService productService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
         this.userService = userService;
         this.securityService = securityService;
         this.companyService = companyService;
+        this.productService = productService;
     }
 
 
     @Override
     public CategoryDto findById(long id) {
         Category category = categoryRepository.findById(id).get();
+        CategoryDto categoryDto=mapperUtil.convert(category, new CategoryDto());
+
+        productService.listAllProducts().stream()
+                .filter(productDto -> productDto.getCategory().equals(categoryDto))
+                .
+
+
         return mapperUtil.convert(category, new CategoryDto());
     }
 
@@ -55,21 +59,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> listAllCategoriesByUser() {
-        //getting all categories from DB
-
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        UserDto userDto = userService.findByUsername(username);
-//        CompanyDto companyDto = companyService.findById(userDto.getCompany().getId());
-//        Company company = mapperUtil.convert(companyDto, new Company());
+    public List<CategoryDto> listAllCategoriesByCompany() {
 
         CompanyDto companyDto = securityService.getLoggedInCompany();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Category> listOfCategories = categoryRepository.findAllByCompanyId(company.getId());
 
-        //converting one by one category to DTO and returning List
-        return listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
+        List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
+
+        for(CategoryDto each : categoryDtoList) {
+            if (productService.listAllProducts().size() != 0){
+                each.setHasProduct(true);
+            }
+        }
+        return categoryDtoList;
     }
 
     @Override
@@ -80,7 +84,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category category = mapperUtil.convert(dto, new Category());
         categoryRepository.save(category);
-
     }
 
     @Override

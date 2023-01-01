@@ -23,7 +23,7 @@ public class CategoryController {
        @GetMapping("/list")
        public String retrieveAllCategories(Model model) {
 
-              model.addAttribute("categories", categoryService.listAllCategoriesByUser());
+              model.addAttribute("categories", categoryService.listAllCategoriesByCompany());
 
               return "category/category-list";
        }
@@ -55,17 +55,13 @@ public class CategoryController {
        public String updateCategory(@PathVariable("id") Long id, Model model) {
               model.addAttribute("category", categoryService.findById(id));
 
-              CategoryDto categoryDto=categoryService.findById(id);
-              if(categoryDto.isHasProduct()){
-                     return "/category/category-update";
-              }
               return "/category/category-update";
        }
 
        @PostMapping("/update/{id}")
        public String editCategory(@Valid @ModelAttribute("category") CategoryDto category, BindingResult bindingResult, Model model, @PathVariable("id") Long id) {
 
-              if (bindingResult.hasErrors()) {
+              if (bindingResult.hasErrors() ) {
                      return "/category/category-update";
               }
 
@@ -85,4 +81,5 @@ public class CategoryController {
        }
 
        }
+
 

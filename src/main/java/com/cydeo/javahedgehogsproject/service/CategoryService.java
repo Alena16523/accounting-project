@@ -10,7 +10,8 @@ public interface CategoryService {
 
     List<CategoryDto> retrieveCategoryByCompany();
 
-    List<CategoryDto> listAllCategoriesByUser();
+    List<CategoryDto> listAllCategoriesByCompany();
+
     void save(CategoryDto dto);
 
     void delete(Long id);
