@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAll() {
 
         if (securityService.getLoggedInUser().getRole().getDescription().equals("Root User")) {
-            return userRepository.findAllByRoleDescriptionOrderByCompany("Admin").stream()
+            return userRepository.findAllByRoleDescriptionOrderByCompanyTitle("Admin").stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
                     .peek(userDto -> userDto.setIsOnlyAdmin(isOnlyAdmin(userDto)))
                     .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
             Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
 
-            return userRepository.findAllByCompanyOrderByRole(company).stream()
+            return userRepository.findAllByCompanyOrderByRoleDescription(company).stream()
                     .map(user -> mapperUtil.convert(user, new UserDto()))
                     .peek(userDto -> userDto.setIsOnlyAdmin(isOnlyAdmin(userDto)))
                     .collect(Collectors.toList());
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     private Boolean isOnlyAdmin(UserDto userDto) {
         Company company = mapperUtil.convert(userDto.getCompany(), new Company());
-        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompany("Admin", company);
+        List<User> admins = userRepository.findAllByRoleDescriptionAndCompanyOrderByCompanyTitleAscRoleDescription("Admin", company);
         return userDto.getRole().getDescription().equals("Admin") && admins.size() == 1;
     }
 
