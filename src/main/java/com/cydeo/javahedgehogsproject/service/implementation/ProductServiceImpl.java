@@ -2,6 +2,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.ProductDto;
+import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -52,14 +53,29 @@ public class ProductServiceImpl implements ProductService {
     public void save(ProductDto productDto) {
         productDto.setQuantityInStock(0);
         Product product = mapperUtil.convert(productDto, new Product());
+        product.setCategory(mapperUtil.convert(productDto.getCategory(), new Category()));
         productRepository.save(product);
     }
 
     @Override
     public void update(ProductDto productDto) {
+
+        Product product=productRepository.findById(productDto.getId()).get();
+        int quantityInStock=product.getQuantityInStock();
+
+        productDto.setQuantityInStock(quantityInStock);
+
         Product product1 = productRepository.save(mapperUtil.convert(productDto, new Product()));
         mapperUtil.convert(product1, new ProductDto());
 
+    }
+
+    @Override
+    public List<ProductDto> findAllProductsByCategoryId(Long id) {
+
+        List<Product> listOfProductsPerCategory=productRepository.findAllByCategoryId(id);
+
+        return listOfProductsPerCategory.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
 
 }
