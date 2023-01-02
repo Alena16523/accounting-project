@@ -16,4 +16,6 @@ public interface UserService {
     void update(UserDto user);
 
     void deleteById(Long id);
+
+    boolean isEmailExist(String username);
 }

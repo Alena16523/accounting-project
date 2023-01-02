@@ -93,4 +93,11 @@ public class UserServiceImpl implements UserService {
                 + user.getRole().getId());
         userRepository.save(user);
     }
+
+    @Override
+    public boolean isEmailExist(String username) {
+        boolean anyMatch = userRepository.findAll().stream().anyMatch(user -> user.getUsername().equals(username));
+
+        return anyMatch;
+    }
 }
