@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.dto;
 import com.cydeo.javahedgehogsproject.enums.ClientVendorType;
 import lombok.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -16,20 +17,21 @@ import javax.validation.constraints.Size;
 public class ClientVendorDto {
 
     private Long id;
-
-    @NotBlank(message = "Company Name is a required field.")
-    @Size(min = 2, max = 50, message = "Company Name should have 2-50 characters long.")
+    @NotBlank
+    @Size(min = 2, max = 50)
     private String clientVendorName;
-    @NotBlank(message = "Phone Number is required field and may be in any valid phone number format.")
+    @NotBlank
+    @Pattern(regexp = "^(\\+\\d{1,3}( )?)?((\\(\\d{1,3}\\))|\\d{1,3})[- .]?\\d{3,4}[- .]?\\d{4}$")
     private String phone;
     @NotBlank
-    @Pattern(regexp = "^http(s{0,1})://[a-zA-Z0-9/\\-\\.]+.([A-Za-z/]{2,5})[a-zA-Z0-9/\\&\\?\\=\\-\\.\\~\\%]*", message = "Website should have a valid format.")
+    @Pattern(regexp = "^http(s{0,1})://[a-zA-Z0-9/\\-\\.]+.([A-Za-z/]{2,5})[a-zA-Z0-9/\\&\\?\\=\\-\\.\\~\\%]*")
     private String website;
-    @NotNull(message = "Please select type.")
+    @NotNull
     private ClientVendorType clientVendorType;
-    @NotNull(message = "Address is required field.")
-    @Size(min = 2, max = 100, message = "Address should have 2-100 characters long")
+    @Valid
+    @NotNull
     private AddressDto address;
+    @NotNull
     private CompanyDto company;
 
 }
