@@ -31,7 +31,6 @@ public class ClientVendorDto {
     @Valid
     @NotNull
     private AddressDto address;
-    @NotNull
     private CompanyDto company;
 
 }

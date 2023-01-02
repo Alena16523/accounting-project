@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/clientVendors")
@@ -29,7 +30,7 @@ public class ClientVendorController {
     @GetMapping("/create")
     public String createClientVendor(Model model) {
         model.addAttribute("newClientVendor", new ClientVendorDto());
-        model.addAttribute("clientVendorTypes", ClientVendorType.values());
+        model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
         return "/clientVendor/clientVendor-create";
     }
 
@@ -37,7 +38,7 @@ public class ClientVendorController {
     public String insertClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("clientVendorTypes", ClientVendorType.values());
+            model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
             return "/clientVendor/clientVendor-create";
         }
 
