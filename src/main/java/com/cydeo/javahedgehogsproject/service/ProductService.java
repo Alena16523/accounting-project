@@ -18,4 +18,5 @@ public interface ProductService {
     void update(ProductDto product);
 
     List<ProductDto> findAllProductsByCategoryId(Long id);
+    List<ProductDto> listAllProductsByCategory(Long categoryId);
 }

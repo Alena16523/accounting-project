@@ -19,10 +19,11 @@ public interface CategoryService {
     CategoryDto update(CategoryDto categoryDto);
 
     void delete(Long id);
+    boolean hasProduct(Long id);
 
     CategoryDto findCategoryById(Long id);
 
-    boolean hasProduct(Long id);
+
 
 
 

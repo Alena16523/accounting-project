@@ -5,7 +5,6 @@ import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
-import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.CategoryRepository;
 import com.cydeo.javahedgehogsproject.service.*;
@@ -40,8 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto findById(long id) {
         Category category = categoryRepository.findById(id).get();
         CategoryDto categoryDto=mapperUtil.convert(category, new CategoryDto());
-
-        return mapperUtil.convert(category, new CategoryDto());
+        categoryDto.setHasProduct(hasProduct(id));
+        return categoryDto;
     }
 
     @Override
@@ -65,9 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
 
         for(CategoryDto each : categoryDtoList) {
-            if (productService.listAllProducts().size() != 0){
-                each.setHasProduct(true);
-            }
+            each.setHasProduct(hasProduct(each.getId()));
         }
         return categoryDtoList.stream().sorted(Comparator.comparing(CategoryDto::getDescription)).collect(Collectors.toList());
     }
