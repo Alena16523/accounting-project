@@ -34,10 +34,15 @@ public class ClientVendorController {
     }
 
     @PostMapping("/create")
-    public String insertClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors())
-            return "/create/clientVendor-create";
+    public String insertClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("clientVendorTypes", ClientVendorType.values());
+            return "/clientVendor/clientVendor-create";
+        }
+
         clientVendorService.create(clientVendorDto);
+
         return "redirect:/clientVendors/list";
     }
 
@@ -49,9 +54,15 @@ public class ClientVendorController {
     }
 
     @PostMapping("/update/{id}")
-    public String editClientVendor(@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, Model model) {
-        model.addAttribute("clientVendorTypes", ClientVendorType.values());
+    public String editClientVendor(@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()){
+            model.addAttribute("clientVendorTypes", ClientVendorType.values());
+            return "/clientVendor/clientVendor-update";
+        }
+
         clientVendorService.update(clientVendorDto);
+
         return "redirect:/clientVendors/list";
     }
 
