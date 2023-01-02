@@ -78,6 +78,8 @@ public class CategoryServiceImpl implements CategoryService {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         dto.setCompany(companyDto);
 
+        dto.setHasProduct(false);
+
         Category category = mapperUtil.convert(dto, new Category());
         categoryRepository.save(category);
     }
