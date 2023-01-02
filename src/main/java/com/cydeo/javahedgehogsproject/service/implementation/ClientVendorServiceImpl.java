@@ -38,7 +38,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         Company company = mapperUtil.convert(companyDto, new Company());
 
-        List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompanyOrderByClientVendorNameAscClientVendorTypeAsc(company);
+        List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompanyOrderByClientVendorTypeAscClientVendorNameAsc(company);
 
         return clientVendorList.stream().map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto())).collect(Collectors.toList());
     }
