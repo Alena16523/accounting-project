@@ -23,7 +23,7 @@ public interface CategoryService {
 
     CategoryDto findCategoryById(Long id);
 
-    boolean hasProduct(Long id);
+
 
 
 

@@ -39,8 +39,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto findById(long id) {
         Category category = categoryRepository.findById(id).get();
         CategoryDto categoryDto=mapperUtil.convert(category, new CategoryDto());
-
-        return mapperUtil.convert(category, new CategoryDto());
+        categoryDto.setHasProduct(hasProduct(id));
+        return categoryDto;
     }
 
     @Override
@@ -56,7 +56,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDto> listAllCategoriesByCompany() {
 
-    public List<CategoryDto> listAllCategoriesByUser() {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         Company company = mapperUtil.convert(companyDto, new Company());
 
@@ -64,19 +63,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
 
-        for(CategoryDto each : categoryDtoList) {
-            if (productService.listAllProducts().size() != 0){
-                each.setHasProduct(true);
-            }
-        }
-        return categoryDtoList.stream().sorted(Comparator.comparing(CategoryDto::getDescription)).collect(Collectors.toList());
-        List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
-
-//        for(CategoryDto each : categoryDtoList) {
-//            if (productService.listAllProductsByCategory(each.getId()).size() != 0){
-//                each.setHasProduct(true);
-//            }
-//        }
         for(CategoryDto each : categoryDtoList) {
             each.setHasProduct(hasProduct(each.getId()));
         }
