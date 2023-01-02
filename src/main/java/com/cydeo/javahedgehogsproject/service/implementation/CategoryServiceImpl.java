@@ -2,6 +2,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CategoryDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -23,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CompanyService companyService;
     private final ProductService productService;
 
+
     public CategoryServiceImpl(CategoryRepository categoryRepository, MapperUtil mapperUtil, UserService userService, SecurityService securityService, CompanyService companyService, ProductService productService) {
         this.categoryRepository = categoryRepository;
         this.mapperUtil = mapperUtil;
@@ -36,6 +38,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto findById(long id) {
         Category category = categoryRepository.findById(id).get();
+        CategoryDto categoryDto=mapperUtil.convert(category, new CategoryDto());
+
         return mapperUtil.convert(category, new CategoryDto());
     }
 
@@ -50,12 +54,22 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDto> listAllCategoriesByCompany() {
+
     public List<CategoryDto> listAllCategoriesByUser() {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         Company company = mapperUtil.convert(companyDto, new Company());
 
         List<Category> listOfCategories = categoryRepository.findAllByCompanyId(company.getId());
 
+        List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
+
+        for(CategoryDto each : categoryDtoList) {
+            if (productService.listAllProducts().size() != 0){
+                each.setHasProduct(true);
+            }
+        }
+        return categoryDtoList.stream().sorted(Comparator.comparing(CategoryDto::getDescription)).collect(Collectors.toList());
         List<CategoryDto> categoryDtoList = listOfCategories.stream().map(category -> mapperUtil.convert(category, new CategoryDto())).collect(Collectors.toList());
 
 //        for(CategoryDto each : categoryDtoList) {
@@ -69,17 +83,29 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDtoList.stream().sorted(Comparator.comparing(CategoryDto::getDescription)).collect(Collectors.toList());
     }
 
-
     @Override
     public void save(CategoryDto dto) {
 
-        dto.setHasProduct(false);
         CompanyDto companyDto = securityService.getLoggedInCompany();
         dto.setCompany(companyDto);
 
+        dto.setHasProduct(false);
+
         Category category = mapperUtil.convert(dto, new Category());
         categoryRepository.save(category);
+    }
 
+    @Override
+    public CategoryDto update(CategoryDto categoryDto) {
+
+        //getting category from DB with the same id
+        Category category=categoryRepository.findById(categoryDto.getId()).get();
+        //setting its description to a new description
+        category.setDescription(categoryDto.getDescription());
+        //saving any changes back to DB
+        categoryRepository.save(category);
+
+        return mapperUtil.convert(category, new CategoryDto());
     }
 
     @Override
@@ -92,9 +118,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public CategoryDto findCategoryById(Long id) {
+
+        Category category=categoryRepository.getCategoryById(id).get();
+
+        return mapperUtil.convert(category, new CategoryDto());
+    }
+
+    @Override
     public boolean hasProduct(Long id) {
         //checking if category has more than 0 products
-        return productService.listAllProductsByCategory(id).size()>0;
+        return productService.findAllProductsByCategoryId(id).size()>0;
     }
 
 
