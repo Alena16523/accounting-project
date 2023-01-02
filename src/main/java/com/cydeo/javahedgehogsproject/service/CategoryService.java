@@ -14,6 +14,7 @@ public interface CategoryService {
     void save(CategoryDto dto);
 
     void delete(Long id);
+    boolean hasProduct(Long id);
 
 
 

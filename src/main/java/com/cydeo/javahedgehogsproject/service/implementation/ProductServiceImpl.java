@@ -42,6 +42,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDto> listAllProductsByCategory(Long categoryId) {
+
+
+        return productRepository.findAllByCategoryId(categoryId).stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
+    }
+
+
+
+    @Override
     public void delete(Long id) {
         Product product = productRepository.findById(id).get();
         product.setDeleted(true);
@@ -51,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void save(ProductDto productDto) {
         productDto.setQuantityInStock(0);
+        productDto.getCategory().setHasProduct(false);
         Product product = mapperUtil.convert(productDto, new Product());
         productRepository.save(product);
     }

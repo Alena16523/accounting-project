@@ -15,4 +15,5 @@ public interface ProductService {
     void save(ProductDto productDto);
 
     void update(ProductDto product);
+    List<ProductDto> listAllProductsByCategory(Long categoryId);
 }
