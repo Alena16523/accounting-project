@@ -74,10 +74,7 @@ public class UserController {
 
     @PostMapping("/update/{id}")
     public String updateUser(@Valid @ModelAttribute("user") UserDto user, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors() || userService.isEmailExist(user.getUsername())) {
-            if (userService.isEmailExist(user.getUsername())) {
-                bindingResult.rejectValue("username", " ", "A user with this email already exists. Please try with different email.");
-            }
+        if (bindingResult.hasErrors()) {
             model.addAttribute("userRoles", roleService.findAll());
             model.addAttribute("companies", companyService.findAllByUsers());
 
