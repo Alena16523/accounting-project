@@ -41,28 +41,34 @@ public class CategoryController {
        @PostMapping("/create")
        public String insertCategory(@Valid @ModelAttribute("newCategory") CategoryDto category, BindingResult bindingResult) {
 
-              if (bindingResult.hasErrors())
+              if (bindingResult.hasErrors() || categoryService.isCategoryExist(category.getDescription())) {
+                     if (categoryService.isCategoryExist(category.getDescription())) {
+                            bindingResult.rejectValue("description", " ", "A category with this name already exists. Please try with different name.");
 
-                     return "/category/category-create";
+                     }
+                            return "/category/category-create";
 
-              categoryService.save(category);
+              }
 
-              return "redirect:/categories/list";
+                     categoryService.save(category);
 
-       }
+                     return "redirect:/categories/list";
 
-       @GetMapping("/update/{id}")
-       public String updateCategory(@PathVariable("id") Long id, Model model) {
+              }
 
-              //getting needed category by id
-              CategoryDto retrievedCategory = categoryService.findCategoryById(id);
-              //setting hasProduct to true or false
-              retrievedCategory.setHasProduct(categoryService.hasProduct(id));
+              @GetMapping("/update/{id}")
+              public String updateCategory (@PathVariable("id") Long id, Model model){
 
-              model.addAttribute("category", categoryService.findById(id));
+                     //getting needed category by id
+                     CategoryDto retrievedCategory = categoryService.findCategoryById(id);
+                     //setting hasProduct to true or false
+                     retrievedCategory.setHasProduct(categoryService.hasProduct(id));
 
-              return "/category/category-update";
-       }
+                     model.addAttribute("category", categoryService.findById(id));
+
+                     return "/category/category-update";
+              }
+
 
        @PostMapping("/update/{id}")
        public String editCategory(@Valid @ModelAttribute("category") CategoryDto categoryDto, BindingResult bindingResult, Model model, @PathVariable("id") Long id) {

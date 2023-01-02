@@ -22,6 +22,7 @@ public interface CategoryService {
     boolean hasProduct(Long id);
 
     CategoryDto findCategoryById(Long id);
+    boolean isCategoryExist(String category);
 
 
 
