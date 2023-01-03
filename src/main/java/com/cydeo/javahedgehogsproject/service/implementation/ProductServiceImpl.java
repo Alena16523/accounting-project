@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
         CompanyDto companyDto = securityService.getLoggedInCompany();
         Company company = mapperUtil.convert(companyDto, new Company());
 
-        List<Product> productList = productRepository.listProductsByCompany(company);
+        List<Product> productList = productRepository.findAllByCategory_CompanyOrderByCategoryAscNameAsc(company);
         return productList.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
 
@@ -60,10 +60,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void save(ProductDto productDto) {
-        productDto.setQuantityInStock(0);
         productDto.getCategory().setHasProduct(false);
         Product product = mapperUtil.convert(productDto, new Product());
-        product.setCategory(mapperUtil.convert(productDto.getCategory(), new Category()));
         productRepository.save(product);
     }
 
