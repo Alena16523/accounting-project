@@ -1,11 +1,10 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.AddressDto;
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.entity.Address;
 import com.cydeo.javahedgehogsproject.entity.ClientVendor;
 import com.cydeo.javahedgehogsproject.entity.Company;
+import com.cydeo.javahedgehogsproject.enums.ClientVendorType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.ClientVendorRepository;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
@@ -31,6 +30,24 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     @Override
     public ClientVendorDto findById(Long id) {
         return mapperUtil.convert(clientVendorRepository.findById(id), new ClientVendorDto());
+    }
+
+    @Override
+    public List<ClientVendorDto> findAllClients() {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+
+        List<ClientVendor> clientList = clientVendorRepository.findAllByCompanyAndClientVendorTypeOrderByClientVendorName(company, ClientVendorType.CLIENT);
+
+        return clientList.stream().map(client -> mapperUtil.convert(client, new ClientVendorDto())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ClientVendorDto> findAllVendors() {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+
+        List<ClientVendor> vendorList = clientVendorRepository.findAllByCompanyAndClientVendorTypeOrderByClientVendorName(company, ClientVendorType.VENDOR);
+
+        return vendorList.stream().map(vendor -> mapperUtil.convert(vendor, new ClientVendorDto())).collect(Collectors.toList());
     }
 
     @Override
