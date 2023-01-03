@@ -8,7 +8,10 @@ import com.cydeo.javahedgehogsproject.service.CategoryService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 @Controller
@@ -43,11 +46,16 @@ public class ProductController {
     }
 
     @PostMapping("/create")
-    public String insertProduct( @ModelAttribute("newProduct") ProductDto newProduct, Model model) {
+    public String insertProduct(@Valid @ModelAttribute("newProduct") ProductDto newProduct, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors() || productService.isNameExist(newProduct.getName())) {
+            if (productService.isNameExist(newProduct.getName())){
+                bindingResult.rejectValue("name", " ", "This Product Name already exists");
+            }
+            model.addAttribute("categories", categoryService.retrieveCategoryByCompany());
+            model.addAttribute("productUnits", ProductUnit.values());
 
-        model.addAttribute("categories", categoryService.retrieveCategoryByCompany());
-        model.addAttribute("productUnits", ProductUnit.values());
-
+            return "/product/product-create";
+        }
         productService.save(newProduct);
         return "redirect:/products/list";
     }
@@ -62,10 +70,14 @@ public class ProductController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@ModelAttribute("product") ProductDto product, Model model) {
-        product.getCategory().setHasProduct(true);
-        model.addAttribute("categories",categoryService.retrieveCategoryByCompany());
-        model.addAttribute("productUnits", ProductUnit.values());
+    public String updateProduct(@Valid @ModelAttribute("product") ProductDto product, BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            product.getCategory().setHasProduct(true);
+            model.addAttribute("categories", categoryService.retrieveCategoryByCompany());
+            model.addAttribute("productUnits", ProductUnit.values());
+        return "/product/product-update";
+        }
         productService.update(product);
         return "redirect:/products/list";
     }

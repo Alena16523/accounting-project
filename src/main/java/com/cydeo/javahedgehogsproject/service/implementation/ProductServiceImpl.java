@@ -50,7 +50,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
     @Override
     public void delete(Long id) {
         Product product = productRepository.findById(id).get();
@@ -85,6 +84,14 @@ public class ProductServiceImpl implements ProductService {
 
         return listOfProductsPerCategory.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
+
+    @Override
+    public boolean isNameExist(String productName) {
+        boolean isExist = productRepository.findAll().stream().anyMatch(product -> product.getName().equals(productName));
+
+        return isExist;
+    }
+
 
 }
 
