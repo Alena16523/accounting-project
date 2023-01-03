@@ -55,7 +55,7 @@ public class ClientVendorController {
     }
 
     @PostMapping("/update/{id}")
-    public String editClientVendor(@ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
+    public String editClientVendor(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()){
             model.addAttribute("clientVendorTypes", ClientVendorType.values());
