@@ -63,7 +63,7 @@ public class ProductController {
 
     @PostMapping("/update/{id}")
     public String updateProduct(@ModelAttribute("product") ProductDto product, Model model) {
-
+        product.getCategory().setHasProduct(true);
         model.addAttribute("categories",categoryService.retrieveCategoryByCompany());
         model.addAttribute("productUnits", ProductUnit.values());
         productService.update(product);
