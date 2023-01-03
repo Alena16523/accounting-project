@@ -112,6 +112,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public boolean isCategoryExist(String category) {
+            boolean anyMatch = categoryRepository.findAll().stream().anyMatch( category1 -> category1.getDescription().equals(category));
+
+            return anyMatch;
+
+    }
+
+    @Override
     public boolean hasProduct(Long id) {
         //checking if category has more than 0 products
         return productService.findAllProductsByCategoryId(id).size()>0;
