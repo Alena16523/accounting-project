@@ -23,4 +23,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(id).get();
         return mapperUtil.convert(invoice, new InvoiceDto());
     }
+
+
 }

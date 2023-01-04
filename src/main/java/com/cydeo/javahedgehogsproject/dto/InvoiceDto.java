@@ -26,4 +26,6 @@ public class InvoiceDto {
     private Integer tax;
     private BigDecimal total;
     private List<InvoiceProduct> invoiceProducts;
+
+
 }

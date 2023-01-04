@@ -6,4 +6,5 @@ import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 public interface InvoiceService {
 
     InvoiceDto findById(long id);
+
 }
