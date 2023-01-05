@@ -75,8 +75,12 @@ public class CategoryController {
 
               categoryDto.setId(id); //to save the same id
 
-              if (bindingResult.hasErrors() ) {
+              if (bindingResult.hasErrors()|| categoryService.isCategoryExist(categoryDto.getDescription())) {
+                     if (categoryService.isCategoryExist(categoryDto.getDescription())) {
+                            bindingResult.rejectValue("description", " ", "A category with this name already exists. Please try with different name.");
+                     }
                      return "/category/category-update";
+
               }
 
               categoryService.update(categoryDto);
