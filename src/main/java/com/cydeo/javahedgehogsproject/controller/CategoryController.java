@@ -80,6 +80,7 @@ public class CategoryController {
                             bindingResult.rejectValue("description", " ", "A category with this name already exists. Please try with different name.");
                      }
                      return "/category/category-update";
+
               }
 
               categoryService.update(categoryDto);
