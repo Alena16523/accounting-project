@@ -32,5 +32,6 @@ public class ClientVendorDto {
     @NotNull
     private AddressDto address;
     private CompanyDto company;
+    private boolean isNotManager;
 
 }
