@@ -92,4 +92,12 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         clientVendorRepository.save(clientVendor);
     }
 
+    @Override
+    public boolean checkIfThereIsAnyClientVendorWithSameNameAndType(String name, ClientVendorType type) {
+        return clientVendorRepository.findAllByCompany(mapperUtil.convert(securityService.getLoggedInCompany(), new Company()))
+                .stream()
+                .filter(clientVendor -> clientVendor.getClientVendorType().equals(type))
+                .anyMatch(clientVendor -> clientVendor.getClientVendorName().equalsIgnoreCase(name));
+    }
+
 }
