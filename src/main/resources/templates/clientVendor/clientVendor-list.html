@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 
 <head th:replace="/fragments/head :: header"></head>
 
@@ -55,38 +57,34 @@
                                                                 <td th:text="${clientVendor.address.state}"></td>
                                                                 <td th:text="${clientVendor.address.country}"></td>
                                                                 <td class="actions">
-                                                                    <span th:if="${clientVendor.notManager}"
-                                                                          class="d-inline-block" tabindex="0"
-                                                                          data-toggle="tooltip"
-                                                                          data-placement="right"
-                                                                          title="You don't have right to edit!">
-                                                                        <button
-                                                                                class="btn btn-danger mb-2 ml-2 mb-sm-0 mr-sm-2"
-                                                                                style="pointer-events: none;" disabled > Edit
-                                                                        </button>
-                                                                    </span>
-                                                                    <a th:unless="${clientVendor.notManager}" th:href="@{/clientVendors/update/{id}(id=${clientVendor.getId()})}"
+                                                                    <a sec:authorize="hasAnyAuthority('Manager','Admin')" th:href="@{/clientVendors/update/{id}(id=${clientVendor.getId()})}"
                                                                        type="button">
                                                                         <button class="btn btn-primary mb-2 mb-sm-0 mr-sm-2">
                                                                             Edit
                                                                         </button>
                                                                     </a>
-                                                                    <span th:if="${clientVendor.notManager}"
+                                                                    <span sec:authorize="hasAnyAuthority('Employee')"
                                                                           class="d-inline-block" tabindex="0"
                                                                           data-toggle="tooltip"
                                                                           data-placement="right"
-                                                                          title="You don't have right to delete!">
-                                                                        <button
-                                                                                class="btn btn-danger mb-2 ml-2 mb-sm-0 mr-sm-2"
-                                                                                style="pointer-events: none;" disabled > Delete
+                                                                          title="Can not be edited! You don't have that right.">
+                                                                        <button class="btn btn-primary mb-2 mb-sm-0 mr-sm-2" disabled > Edit
                                                                         </button>
                                                                     </span>
-                                                                    <a th:unless="${clientVendor.notManager}" th:href="@{/clientVendors/delete/{id}(id=${clientVendor.getId()})}"
+                                                                    <a sec:authorize="hasAnyAuthority('Manager','Admin')" th:href="@{/clientVendors/delete/{id}(id=${clientVendor.getId()})}"
                                                                        type="button">
                                                                         <button class="btn btn-danger mb-2 mb-sm-0 mr-sm-2">
                                                                             Delete
                                                                         </button>
                                                                     </a>
+                                                                    <span sec:authorize="hasAnyAuthority('Employee')"
+                                                                          class="d-inline-block" tabindex="0"
+                                                                          data-toggle="tooltip"
+                                                                          data-placement="right"
+                                                                          title="Can not be deleted! You don't have that right.">
+                                                                        <button class="btn btn-danger mb-2 mb-sm-0 mr-sm-2" disabled > Delete
+                                                                        </button>
+                                                                    </span>
                                                                 </td>
                                                             </tr>
                                                             </tbody>
@@ -104,7 +102,8 @@
                     <div class="input-group row justify-content-end">
                         <div class="col-auto">
                             <form>
-                                <div class="col-12 col-sm-6 col-lg-3 d-flex align-items-right">
+                                <div class="col-12 col-sm-6 col-lg-3 d-flex align-items-right"
+                                     sec:authorize="hasAnyAuthority('Manager','Admin')">
                                     <a id="companyCreateLink" class="btn bg-dark text-light mb-1"
                                        th:href="@{/clientVendors/create}"><i class="fa fa-plus mr-1"></i>
                                         Create Client/Vendor</a>
