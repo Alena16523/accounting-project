@@ -50,7 +50,7 @@ public class ClientVendorController {
     @GetMapping("/update/{id}")
     public String updateClientVendor(@PathVariable("id") Long id, Model model) {
         model.addAttribute("clientVendor", clientVendorService.findById(id));
-        model.addAttribute("clientVendorTypes", ClientVendorType.values());
+        model.addAttribute("clientVendorTypes", clientVendorService.findById(id).getClientVendorType());
         return "/clientVendor/clientVendor-update";
     }
 
@@ -58,7 +58,7 @@ public class ClientVendorController {
     public String editClientVendor(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()){
-            model.addAttribute("clientVendorTypes", ClientVendorType.values());
+            model.addAttribute("clientVendorTypes", clientVendorDto.getClientVendorType());
             return "/clientVendor/clientVendor-update";
         }
 
