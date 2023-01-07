@@ -1,7 +1,10 @@
 package com.cydeo.javahedgehogsproject.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum InvoiceType {
-    PURCHASE("Purchase"), SALE("Sales");
+    PURCHASE("Purchase"), SALES("Sales");
 
     private final String value;
 

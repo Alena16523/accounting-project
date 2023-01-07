@@ -58,7 +58,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
         List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompanyOrderByClientVendorTypeAscClientVendorNameAsc(company);
 
-        if (checkRole()){ // if user is employee
+        if (checkRole()) { // if user is employee
             return clientVendorList.stream()
                     .map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto()))
                     .peek(clientVendorDto -> clientVendorDto.setNotManager(true))
@@ -103,6 +103,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
         clientVendorRepository.save(clientVendor);
     }
+
 
     private boolean checkRole() { // returns true if user is employee
         UserDto loggedInUser = securityService.getLoggedInUser();
