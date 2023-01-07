@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/salesInvoices")
 public class SalesInvoiceController {
+
     private final InvoiceService invoiceService;
     private final ClientVendorService clientVendorService;
 
@@ -30,8 +31,6 @@ public class SalesInvoiceController {
     public String createSalesInvoice(Model model){
         model.addAttribute("newSalesInvoice",new InvoiceDto());
         model.addAttribute("clients",clientVendorService.findAllClients());
-
-
         return "/invoice/sales-invoice-create";
     }
 }

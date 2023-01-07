@@ -6,11 +6,11 @@ import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
+import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +20,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
     private final SecurityService securityService;
+    private final InvoiceProductService invoiceProductService;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, InvoiceProductService invoiceProductService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
+        this.invoiceProductService = invoiceProductService;
     }
 
 
@@ -37,18 +39,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDto> findAllInvoice(InvoiceType invoiceType) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceType(company,invoiceType);
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceTypeOrderByInvoiceNoDesc(company, invoiceType);
 
-       return invoiceList.stream().map(invoice -> {
+        return invoiceList.stream().map(invoice -> {
+
             InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
-            invoiceDTO.setTax(100);
-            invoiceDTO.setTotal(BigDecimal.ONE);
-            invoiceDTO.setPrice(BigDecimal.ONE);
+            invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
+            invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
+            invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
+
             return invoiceDTO;
-
         }).collect(Collectors.toList());
-
-
     }
 
 
