@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

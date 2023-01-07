@@ -1,5 +1,8 @@
 package com.cydeo.javahedgehogsproject.service;
+
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
+import com.cydeo.javahedgehogsproject.enums.ClientVendorType;
+
 import java.util.List;
 
 public interface ClientVendorService {
@@ -11,7 +14,7 @@ public interface ClientVendorService {
     ClientVendorDto create(ClientVendorDto clientVendorDto);
     ClientVendorDto update(ClientVendorDto clientVendorDto);
     void deleteById(Long id);
-
+    boolean checkIfThereIsAnyClientVendorWithSameNameAndType(String name, ClientVendorType type);
 
 
 }
