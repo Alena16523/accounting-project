@@ -37,9 +37,7 @@ public class PurchaseInvoiceController {
     public String createInvoicePurchase(Model model) {
 
         model.addAttribute("newPurchaseInvoice", invoiceService.getNewInvoice(InvoiceType.PURCHASE));
-        model.addAttribute("vendors", clientVendorService.findAllVendors().stream()
-                .sorted(Comparator.comparing(ClientVendorDto::getClientVendorName))
-                .collect(Collectors.toList()));
+        model.addAttribute("vendors", clientVendorService.findAllVendors());
         return "/invoice/purchase-invoice-create";
     }
 
