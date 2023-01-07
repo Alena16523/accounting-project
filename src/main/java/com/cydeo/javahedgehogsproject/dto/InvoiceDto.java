@@ -23,7 +23,7 @@ public class InvoiceDto {
     private CompanyDto company;
     private ClientVendorDto clientVendor;
     private BigDecimal price;
-    private Integer tax;
+    private BigDecimal tax;
     private BigDecimal total;
     private List<InvoiceProductDto> invoiceProducts;
 
