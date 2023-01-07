@@ -1,7 +1,6 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.dto.RoleDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.enums.CompanyStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -90,6 +89,11 @@ public class CompanyServiceImpl implements CompanyService {
                     .collect(Collectors.toList());
         }
 
+    }
+
+    @Override
+    public boolean isCompanyNameUnique(String companyTitle) {
+        return companyRepository.findAll().stream().anyMatch(company -> company.getTitle().equalsIgnoreCase(companyTitle));
     }
 
 }

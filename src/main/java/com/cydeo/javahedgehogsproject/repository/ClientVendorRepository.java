@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ClientVendorRepository extends JpaRepository<ClientVendor, Long> {
+    List<ClientVendor> findAllByCompany(Company company);
     List<ClientVendor> findAllByCompanyOrderByClientVendorTypeAscClientVendorNameAsc(Company company);
     List<ClientVendor> findAllByCompanyAndClientVendorTypeOrderByClientVendorName(Company company, ClientVendorType clientVendorType);
 }

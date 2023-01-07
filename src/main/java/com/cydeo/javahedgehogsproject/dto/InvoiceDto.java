@@ -1,6 +1,5 @@
 package com.cydeo.javahedgehogsproject.dto;
 
-import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import lombok.*;
@@ -15,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvoiceDto {
+
     private Long id;
     private String invoiceNo;
     private InvoiceStatus invoiceStatus;
@@ -25,7 +25,6 @@ public class InvoiceDto {
     private BigDecimal price;
     private Integer tax;
     private BigDecimal total;
-    private List<InvoiceProduct> invoiceProducts;
-
+    private List<InvoiceProductDto> invoiceProducts;
 
 }
