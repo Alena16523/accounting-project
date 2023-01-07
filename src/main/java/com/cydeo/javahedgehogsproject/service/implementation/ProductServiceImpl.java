@@ -92,7 +92,22 @@ public class ProductServiceImpl implements ProductService {
         return isExist;
     }
 
+    @Override
+    public List<ProductDto> findAll() {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getCategory().getCompany().getId() == securityService.getLoggedInUser().getCompany().getId())
+                .map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
 
-}
+    }
+
+    @Override
+    public ProductDto create(ProductDto productDto) {
+        Product product = productRepository.save(mapperUtil.convert(productDto, new Product()));
+        return mapperUtil.convert(product, new ProductDto());
+    }
+    }
+
+
+
 
 
