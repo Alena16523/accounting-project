@@ -37,6 +37,10 @@ public class ClientVendorController {
     @PostMapping("/create")
     public String insertClientVendor(@Valid @ModelAttribute("newClientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
 
+        if (clientVendorService.checkIfThereIsAnyClientVendorWithSameNameAndType(clientVendorDto.getClientVendorName(), clientVendorDto.getClientVendorType())) {
+            bindingResult.rejectValue("clientVendorName", " ", "Company with this name and this type already exists. Please try with a different name or type!");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("clientVendorTypes", Arrays.asList(ClientVendorType.values()));
             return "/clientVendor/clientVendor-create";
@@ -50,15 +54,19 @@ public class ClientVendorController {
     @GetMapping("/update/{id}")
     public String updateClientVendor(@PathVariable("id") Long id, Model model) {
         model.addAttribute("clientVendor", clientVendorService.findById(id));
-        model.addAttribute("clientVendorTypes", ClientVendorType.values());
+        model.addAttribute("clientVendorTypes", clientVendorService.findById(id).getClientVendorType());
         return "/clientVendor/clientVendor-update";
     }
 
     @PostMapping("/update/{id}")
     public String editClientVendor(@Valid @ModelAttribute("clientVendor") ClientVendorDto clientVendorDto, BindingResult bindingResult, Model model) {
 
-        if (bindingResult.hasErrors()){
-            model.addAttribute("clientVendorTypes", ClientVendorType.values());
+        if (clientVendorService.checkIfThereIsAnyClientVendorWithSameNameAndType(clientVendorDto.getClientVendorName(), clientVendorDto.getClientVendorType())) {
+            bindingResult.rejectValue("clientVendorName", " ", "Company with this name and this type already exists. Please try with a different name or type!");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("clientVendorTypes", clientVendorDto.getClientVendorType());
             return "/clientVendor/clientVendor-update";
         }
 
@@ -68,7 +76,7 @@ public class ClientVendorController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id){
+    public String delete(@PathVariable("id") Long id) {
         clientVendorService.deleteById(id);
         return "redirect:/clientVendors/list";
     }

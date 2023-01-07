@@ -2,7 +2,6 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.ClientVendorDto;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.dto.UserDto;
 import com.cydeo.javahedgehogsproject.entity.ClientVendor;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.enums.ClientVendorType;
@@ -58,18 +57,7 @@ public class ClientVendorServiceImpl implements ClientVendorService {
 
         List<ClientVendor> clientVendorList = clientVendorRepository.findAllByCompanyOrderByClientVendorTypeAscClientVendorNameAsc(company);
 
-        if (checkRole()){ // if user is employee
-            return clientVendorList.stream()
-                    .map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto()))
-                    .peek(clientVendorDto -> clientVendorDto.setNotManager(true))
-                    .collect(Collectors.toList());
-        } else { // if user is not employee
-            return clientVendorList.stream()
-                    .map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto()))
-                    .peek(clientVendorDto -> clientVendorDto.setNotManager(false))
-                    .collect(Collectors.toList());
-        }
-
+        return clientVendorList.stream().map(clientVendor -> mapperUtil.convert(clientVendor, new ClientVendorDto())).collect(Collectors.toList());
     }
 
     @Override
@@ -104,9 +92,12 @@ public class ClientVendorServiceImpl implements ClientVendorService {
         clientVendorRepository.save(clientVendor);
     }
 
-    private boolean checkRole() { // returns true if user is employee
-        UserDto loggedInUser = securityService.getLoggedInUser();
-        return loggedInUser.getRole().getDescription().equals("Employee");
+    @Override
+    public boolean checkIfThereIsAnyClientVendorWithSameNameAndType(String name, ClientVendorType type) {
+        return clientVendorRepository.findAllByCompany(mapperUtil.convert(securityService.getLoggedInCompany(), new Company()))
+                .stream()
+                .filter(clientVendor -> clientVendor.getClientVendorType().equals(type))
+                .anyMatch(clientVendor -> clientVendor.getClientVendorName().equalsIgnoreCase(name));
     }
 
 }
