@@ -13,4 +13,6 @@ public interface CompanyService {
     void activate(Long id);
     void deactivate(Long id);
     List<CompanyDto> findAllByUsers();
+    boolean isCompanyNameUnique(String companyTitle);
+
 }

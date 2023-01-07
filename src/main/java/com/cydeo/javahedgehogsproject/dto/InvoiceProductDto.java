@@ -1,15 +1,16 @@
 package com.cydeo.javahedgehogsproject.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
 public class InvoiceProductDto {
+
     private Long id;
     private Integer quantity;
     private BigDecimal price;
@@ -19,4 +20,5 @@ public class InvoiceProductDto {
     private Integer remainingQty;
     private InvoiceDto invoice;
     private ProductDto product;
+
 }
