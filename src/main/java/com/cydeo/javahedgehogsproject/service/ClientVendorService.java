@@ -16,4 +16,5 @@ public interface ClientVendorService {
     void deleteById(Long id);
     boolean checkIfThereIsAnyClientVendorWithSameNameAndType(String name, ClientVendorType type);
 
+
 }
