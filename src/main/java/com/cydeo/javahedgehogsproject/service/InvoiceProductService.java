@@ -12,4 +12,9 @@ public interface InvoiceProductService {
     BigDecimal totalPriceWithoutTax(Long invoiceId);
     InvoiceService findAllByInvoice(Long id);
     List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId);
+    List<InvoiceProductDto> findAllById(Long id);
+
+    void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id);
+
+    void delete(Long productId);
 }
