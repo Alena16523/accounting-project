@@ -88,7 +88,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     private BigDecimal calculate(InvoiceProductDto invoiceProductDto) {
         BigDecimal totalWithOutTax = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity()));
-        BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(BigDecimal.valueOf(invoiceProductDto.getTax())).divide(new BigDecimal(100));
+        BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(invoiceProductDto.getTax()).divide(new BigDecimal(100));
 
         return totalWithOutTax.add(taxAmount);
     }
@@ -112,7 +112,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         InvoiceProduct invoiceProduct = invoiceProductRepository.findById(productId).get();
         invoiceProduct.setDeleted(true);
         invoiceProduct.setPrice(new BigDecimal(0));
-        invoiceProduct.setTax(0);
+        invoiceProduct.setTax(new BigDecimal(0));
 
         invoiceProductRepository.save(invoiceProduct);
     }
