@@ -18,6 +18,12 @@ public interface ProductService {
 
     List<ProductDto> findAllProductsByCategoryId(Long id);
 
+    List<ProductDto> listAllProductsByCategory(Long categoryId);
+
     boolean isNameExist(String productName);
+
+    List<ProductDto> findAll();
+
+    public ProductDto create(ProductDto productDto);
 
 }

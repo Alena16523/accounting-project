@@ -4,10 +4,12 @@ import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
-import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
+import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
+import com.cydeo.javahedgehogsproject.repository.ProductRepository;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
@@ -25,12 +27,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final MapperUtil mapperUtil;
     final private SecurityService securityService;
     private final InvoiceProductService invoiceProductService;
+    private final InvoiceProductRepository invoiceProductRepository;
+    private final ProductRepository productRepository;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, InvoiceProductService invoiceProductService) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, ProductRepository productRepository, InvoiceProductService invoiceProductService, InvoiceProductRepository invoiceProductRepository) {
+
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
+        this.productRepository = productRepository;
         this.invoiceProductService = invoiceProductService;
+        this.invoiceProductRepository = invoiceProductRepository;
+
     }
 
 
@@ -62,6 +70,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return InvoiceNo;
     }
 
+
     @Override
     public InvoiceDto save(InvoiceDto invoiceDto) {
 
@@ -85,6 +94,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceList.stream().map(invoice -> {
 
             InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDTO.setInvoiceProducts(invoiceProductService.findAllInvoiceProducts(invoice.getId()));
             invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
             invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
             invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));

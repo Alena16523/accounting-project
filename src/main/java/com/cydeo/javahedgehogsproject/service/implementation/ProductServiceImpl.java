@@ -59,8 +59,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void update(ProductDto productDto) {
 
-        Product product = productRepository.findById(productDto.getId()).get();
-        int quantityInStock = product.getQuantityInStock();
+        Product product=productRepository.findById(productDto.getId()).get();
+        int quantityInStock=product.getQuantityInStock();
 
         productDto.setQuantityInStock(quantityInStock);
 
@@ -72,11 +72,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> findAllProductsByCategoryId(Long id) {
 
-        List<Product> listOfProductsPerCategory = productRepository.findAllByCategoryId(id);
+        List<Product> listOfProductsPerCategory=productRepository.findAllByCategoryId(id);
 
-        return listOfProductsPerCategory.stream()
-                .map(product -> mapperUtil.convert(product, new ProductDto()))
-                .collect(Collectors.toList());
+        return listOfProductsPerCategory.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
 
     @Override
@@ -86,8 +84,20 @@ public class ProductServiceImpl implements ProductService {
         return isExist;
     }
 
+    @Override
+    public List<ProductDto> findAll() {
+        return productRepository.findAll().stream()
+                .filter(product -> product.getCategory().getCompany().getId() == securityService.getLoggedInUser().getCompany().getId())
+                .map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
 
+    }
 
-}
+    @Override
+    public ProductDto create(ProductDto productDto) {
+        Product product = productRepository.save(mapperUtil.convert(productDto, new Product()));
+        return mapperUtil.convert(product, new ProductDto());
+    }
+    }
+
 
 

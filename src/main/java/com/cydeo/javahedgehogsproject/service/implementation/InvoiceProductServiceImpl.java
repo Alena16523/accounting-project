@@ -1,7 +1,7 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -22,6 +22,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final InvoiceProductRepository invoiceProductRepository;
     private final MapperUtil mapperUtil;
     private final InvoiceService invoiceService;
+
 
     public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, @Lazy InvoiceService invoiceService) {
         this.invoiceProductRepository = invoiceProductRepository;
@@ -51,6 +52,20 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return totalPrice.setScale(2, RoundingMode.CEILING);
     }
 
+
+    @Override
+    public List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId) {
+        List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProductDto> DtoList = invoiceProductList.stream().map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto())).collect(Collectors.toList());
+        for (InvoiceProductDto each : DtoList) {
+            BigDecimal x = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice());
+            BigDecimal y = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice()).multiply(each.getTax()).divide(BigDecimal.valueOf(100));
+            each.setTotal(x.add(y).setScale(2, RoundingMode.CEILING));
+
+        }
+        return DtoList;
+    }
+
     @Override
     public void saveProduct(InvoiceProductDto invoiceProductDto, Long id) {
 
@@ -65,9 +80,11 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceDto.setTotal(invoiceProductDto.getTotal());
         invoiceProductRepository.save(invoiceProduct);
 
+
     }
-
-
 }
+
+
+
 
 
