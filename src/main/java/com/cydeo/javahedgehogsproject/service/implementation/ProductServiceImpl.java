@@ -78,6 +78,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDto> listAllProductsByCategory(Long categoryId) {
+        return null;
+    }
+
+    @Override
     public boolean isNameExist(String productName) {
         boolean isExist = productRepository.findAll().stream().anyMatch(product -> product.getName().equals(productName));
 

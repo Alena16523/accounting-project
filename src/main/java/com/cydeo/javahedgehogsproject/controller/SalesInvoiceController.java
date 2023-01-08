@@ -39,7 +39,7 @@ public class SalesInvoiceController {
 
     @GetMapping("/create")
     public String createSalesInvoice(Model model){
-        model.addAttribute("newSalesInvoice",new InvoiceDto());
+        model.addAttribute("newSalesInvoice",invoiceService.getNewSalesInvoice(InvoiceType.SALES));
         model.addAttribute("clients",clientVendorService.findAllClients());
         return "/invoice/sales-invoice-create";
     }
