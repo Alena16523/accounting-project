@@ -91,7 +91,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         BigDecimal totalWithOutTax = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity()));
         BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(invoiceProductDto.getTax()).divide(new BigDecimal(100));
 
-        return totalWithOutTax.add(taxAmount);
+        return totalWithOutTax.add(taxAmount).setScale(2, RoundingMode.CEILING);
     }
 
     @Override
