@@ -1,6 +1,8 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
+import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
@@ -56,7 +58,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
         //find all invoiceProducts belongs to that invoice:
         List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
-        //delete all invoiceProducts that we found one by one base on id:
+        //delete one by one all invoiceProducts that we found base on the id:
         listInvoiceProducts.forEach(invoiceProduct -> {
             Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
             if(foundInvoiceProduct.isPresent()){
@@ -65,6 +67,4 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
             }
         });
     }
-
-
 }

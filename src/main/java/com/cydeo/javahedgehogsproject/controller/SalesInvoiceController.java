@@ -1,14 +1,13 @@
 package com.cydeo.javahedgehogsproject.controller;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping("/salesInvoices")
@@ -40,4 +39,5 @@ public class SalesInvoiceController {
         invoiceService.delete(id);
         return "redirect:/salesInvoices/list";
     }
+
 }
