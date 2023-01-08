@@ -1,16 +1,11 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-
-import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
-import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
-import com.cydeo.javahedgehogsproject.repository.ProductRepository;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
@@ -18,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-
 
 import java.util.stream.Collectors;
 
@@ -28,19 +22,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
     final private SecurityService securityService;
-    private final ProductRepository productRepository;
     private final InvoiceProductService invoiceProductService;
-    private final InvoiceProductRepository invoiceProductRepository;
 
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, ProductRepository productRepository, InvoiceProductService invoiceProductService, InvoiceProductRepository invoiceProductRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, InvoiceProductService invoiceProductService) {
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
-        this.productRepository = productRepository;
         this.invoiceProductService = invoiceProductService;
-        this.invoiceProductRepository = invoiceProductRepository;
     }
-
 
     @Override
     public InvoiceDto findById(long id) {
