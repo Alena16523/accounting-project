@@ -4,6 +4,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
@@ -63,6 +64,16 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         return InvoiceNo;
     }
+
+    @Override
+    public void approveSalesInvoice(Long invoiceId) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
+        invoiceProductService.reduceQuantityOfProduct(invoiceId);
+        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoice.setDate(LocalDate.now());
+        invoiceRepository.save(invoice);
+    }
+
     @Override
     public List<InvoiceDto> findAllInvoice(InvoiceType invoiceType) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());

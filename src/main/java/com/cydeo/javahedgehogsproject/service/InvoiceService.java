@@ -16,4 +16,6 @@ public interface InvoiceService {
      String InvoiceNo(InvoiceType invoiceType, Long companyId);
 
 
+    void approveSalesInvoice(Long invoiceId);
+
 }

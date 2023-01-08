@@ -5,6 +5,7 @@ import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,4 +34,11 @@ public class SalesInvoiceController {
         model.addAttribute("clients",clientVendorService.findAllClients());
         return "/invoice/sales-invoice-create";
     }
+
+    @GetMapping("/approve/{id}")
+    public String approveSalesInvoice(@PathVariable("id") Long invoiceId) {
+        invoiceService.approveSalesInvoice(invoiceId);
+        return "redirect:/salesInvoices/list";
+    }
+
 }
