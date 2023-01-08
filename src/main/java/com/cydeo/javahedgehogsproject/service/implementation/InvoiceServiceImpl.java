@@ -1,12 +1,11 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-
 import java.util.stream.Collectors;
 
 @Service
@@ -28,17 +26,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
     final private SecurityService securityService;
-    private final ProductRepository productRepository;
     private final InvoiceProductService invoiceProductService;
     private final InvoiceProductRepository invoiceProductRepository;
+    private final ProductRepository productRepository;
 
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, ProductRepository productRepository, InvoiceProductService invoiceProductService, InvoiceProductRepository invoiceProductRepository) {
+
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
         this.productRepository = productRepository;
         this.invoiceProductService = invoiceProductService;
         this.invoiceProductRepository = invoiceProductRepository;
+
     }
 
 
@@ -70,6 +70,22 @@ public class InvoiceServiceImpl implements InvoiceService {
         return InvoiceNo;
     }
 
+
+    @Override
+    public InvoiceDto save(InvoiceDto invoiceDto) {
+
+        CompanyDto company = securityService.getLoggedInCompany();
+        invoiceDto.setCompany(company);
+        invoiceDto.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+        invoiceDto.setInvoiceType(InvoiceType.SALES);
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
+        invoiceRepository.save(invoice);
+        invoiceDto.setId(invoice.getId());
+
+        return invoiceDto;
+    }
+
+
     @Override
     public List<InvoiceDto> findAllInvoice(InvoiceType invoiceType) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
@@ -87,6 +103,31 @@ public class InvoiceServiceImpl implements InvoiceService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public InvoiceDto getNewSalesInvoice(InvoiceType invoiceType) {
+
+        Long companyId = securityService.getLoggedInUser().getCompany().getId();
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceNo(createInvoiceNoForSalesInvoice(invoiceType, companyId));
+        invoice.setDate(LocalDate.now());
+        return mapperUtil.convert(invoice, new InvoiceDto());
+    }
+
+    @Override
+    public String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId) {
+        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
+
+        String saleInvoiceNo = "";
+
+        if (invoiceType.getValue().equals("Sales")) {
+            saleInvoiceNo = "S-" + "00" + (id + 1);
+        }
+
+        return saleInvoiceNo;
+    }
+
 
 }
+
+
 
