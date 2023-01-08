@@ -1,22 +1,32 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
+import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
-import com.cydeo.javahedgehogsproject.service.SecurityService;
+import com.cydeo.javahedgehogsproject.service.InvoiceService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     private final InvoiceProductRepository invoiceProductRepository;
+    private final MapperUtil mapperUtil;
+    private final InvoiceService invoiceService;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, @Lazy InvoiceService invoiceService) {
         this.invoiceProductRepository = invoiceProductRepository;
+        this.mapperUtil = mapperUtil;
+        this.invoiceService = invoiceService;
     }
 
     @Override
@@ -41,4 +51,23 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return totalPrice.setScale(2, RoundingMode.CEILING);
     }
 
+    @Override
+    public void saveProduct(InvoiceProductDto invoiceProductDto, Long id) {
+
+        InvoiceDto invoiceDto = invoiceService.findById(id);
+        InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
+        invoiceProduct.setProfitLoss(new BigDecimal(0));
+        invoiceProduct.setInvoice(mapperUtil.convert(invoiceDto, new Invoice()));
+        invoiceDto.setInvoiceProducts(List.of(invoiceProductDto));
+        invoiceDto.setPrice(invoiceProductDto.getPrice());
+        BigDecimal tax = invoiceProductDto.getPrice().multiply(invoiceProductDto.getTax());
+        invoiceDto.setTax(tax);
+        invoiceDto.setTotal(invoiceProductDto.getTotal());
+        invoiceProductRepository.save(invoiceProduct);
+
+    }
+
+
 }
+
+
