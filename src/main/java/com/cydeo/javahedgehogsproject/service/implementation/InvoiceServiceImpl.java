@@ -78,6 +78,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceList.stream().map(invoice -> {
 
             InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDTO.setInvoiceProducts(invoiceProductService.findAllInvoiceProducts(invoice.getId()));
             invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
             invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
             invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
