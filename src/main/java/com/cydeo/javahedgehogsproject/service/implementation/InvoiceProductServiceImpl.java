@@ -2,32 +2,31 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
-import com.cydeo.javahedgehogsproject.entity.Product;
+import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
-import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
+import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
 public class InvoiceProductServiceImpl implements InvoiceProductService {
 
-    private final MapperUtil mapperUtil;
     private final InvoiceProductRepository invoiceProductRepository;
+    private  final MapperUtil mapperUtil;
 
-    public InvoiceProductServiceImpl(MapperUtil mapperUtil, InvoiceProductRepository invoiceProductRepository) {
-        this.mapperUtil = mapperUtil;
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil) {
         this.invoiceProductRepository = invoiceProductRepository;
+        this.mapperUtil = mapperUtil;
     }
-
 
     @Override
     public BigDecimal totalTax(Long invoiceId) {
@@ -49,6 +48,24 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
             totalPrice = totalPrice.add(each.getPrice().multiply(BigDecimal.valueOf(each.getQuantity())));
         }
         return totalPrice.setScale(2, RoundingMode.CEILING);
+    }
+
+    @Override
+    public InvoiceService findAllByInvoice(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId) {
+        List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProductDto> DtoList = invoiceProductList.stream().map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto())).collect(Collectors.toList());
+        for (InvoiceProductDto each: DtoList) {
+            BigDecimal x= BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice());
+            BigDecimal y= BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice()).multiply(each.getTax()).divide(BigDecimal.valueOf(100));
+            each.setTotal(x.add(y).setScale(2, RoundingMode.CEILING));
+
+        }
+        return DtoList;
     }
 
 

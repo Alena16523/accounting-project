@@ -13,7 +13,7 @@ public interface InvoiceService {
 
     InvoiceDto getNewInvoice(InvoiceType invoiceType);
 
-    String InvoiceNo(InvoiceType invoiceType, Long companyId);
+     String InvoiceNo(InvoiceType invoiceType, Long companyId);
 
     void delete(Long id);
 
