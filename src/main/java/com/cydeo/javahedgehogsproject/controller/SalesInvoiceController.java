@@ -4,21 +4,29 @@ import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
+import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequestMapping("/salesInvoices")
 public class SalesInvoiceController {
 
-    private final InvoiceService invoiceService;
-    private final ClientVendorService clientVendorService;
+    private InvoiceService invoiceService;
+    private InvoiceProductService invoiceProductService;
+    private ProductService productService;
+    private ClientVendorService clientVendorService;
 
-    public SalesInvoiceController(InvoiceService invoiceService, ClientVendorService clientVendorService) {
+    public SalesInvoiceController(InvoiceService invoiceService, InvoiceProductService invoiceProductService, ProductService productService, ClientVendorService clientVendorService) {
         this.invoiceService = invoiceService;
+        this.invoiceProductService = invoiceProductService;
+        this.productService = productService;
         this.clientVendorService = clientVendorService;
     }
 
@@ -33,6 +41,20 @@ public class SalesInvoiceController {
         model.addAttribute("newSalesInvoice",new InvoiceDto());
         model.addAttribute("clients",clientVendorService.findAllClients());
         return "/invoice/sales-invoice-create";
+    }
+
+
+    @GetMapping("/update/{id}")
+    public String editSalesInvoice(@PathVariable Long id, Model model) throws Exception {
+
+        model.addAttribute("invoice", invoiceService.findById(id));
+        model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
+        model.addAttribute("invoiceProducts", invoiceProductService.findAllInvoiceProducts(id));
+       model.addAttribute("products", productService.findAll());
+        model.addAttribute("clients", clientVendorService.findAllClients());
+      // model.addAttribute("invoices",invoiceService.findAllInvoice(InvoiceType.SALES));
+
+        return "invoice/sales-invoice-update";
     }
 
     @GetMapping("/approve/{id}")
