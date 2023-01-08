@@ -87,6 +87,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public void update(InvoiceDto invoice) {
+        Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
+        Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
+        convertedInvoice.setId(dbInvoice.getId());
+        convertedInvoice.setInvoiceStatus(dbInvoice.getInvoiceStatus());
+        convertedInvoice.setInvoiceType(dbInvoice.getInvoiceType());
+        convertedInvoice.setCompany(dbInvoice.getCompany());
+        invoiceRepository.save(convertedInvoice);
+    }
 
 }
 
