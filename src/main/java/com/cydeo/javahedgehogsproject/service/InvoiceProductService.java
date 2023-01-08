@@ -15,5 +15,7 @@ public interface InvoiceProductService {
 
     void saveProduct(InvoiceProductDto invoiceProductDto,Long id);
 
+    void deleteSalesInvoiceProduct(Long invoiceProductId);
+
 
 }
