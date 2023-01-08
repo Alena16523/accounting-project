@@ -10,7 +10,6 @@ public interface InvoiceService {
     InvoiceDto findById(long id);
     List<InvoiceDto> findAllInvoice(InvoiceType invoiceType);
 
-
     InvoiceDto getNewInvoice(InvoiceType invoiceType);
 
      String InvoiceNo(InvoiceType invoiceType, Long companyId);
