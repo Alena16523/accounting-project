@@ -6,6 +6,7 @@ import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
@@ -94,6 +95,20 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceRepository.save(invoice);
         //delete all invoiceProducts belongs to the deleted invoice:
         invoiceProductService.deleteByInvoice(InvoiceType.SALES,mapperUtil.convert(invoice, new InvoiceDto()));
+    }
+
+    @Override
+    public void savePurchaseInvoice(InvoiceDto purchaseInvoice) {
+        CompanyDto company = securityService.getLoggedInCompany();
+
+        purchaseInvoice.setCompany(company);
+        purchaseInvoice.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+        purchaseInvoice.setInvoiceType(InvoiceType.PURCHASE);
+
+        Invoice newInvoice=mapperUtil.convert(purchaseInvoice, new Invoice());
+
+        invoiceRepository.save(newInvoice);
+       purchaseInvoice.setId(newInvoice.getId());
     }
 
     @Override

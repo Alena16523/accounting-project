@@ -1,6 +1,7 @@
 package com.cydeo.javahedgehogsproject.service;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface InvoiceService {
     void update(InvoiceDto invoice);
 
     void delete(Long id);
+
+    void savePurchaseInvoice(InvoiceDto purchaseInvoice);
 
 
 }
