@@ -16,9 +16,9 @@ public interface InvoiceProductService {
     List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId);
     List<InvoiceProductDto> findAllById(Long id);
 
-    void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id);
+    void savePurchaseProductByInvoiceId(InvoiceProductDto invoiceProduct, Long id);
 
-    void delete(Long productId);
+    void deletePurchaseProduct(Long productId);
     void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
 
     void saveProduct(InvoiceProductDto invoiceProductDto,Long id);

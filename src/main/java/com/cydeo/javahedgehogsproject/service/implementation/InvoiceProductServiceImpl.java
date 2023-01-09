@@ -101,12 +101,11 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id) {
+    public void savePurchaseProductByInvoiceId(InvoiceProductDto invoiceProduct, Long id) {
         InvoiceDto invoice = invoiceService.findById(id);
         InvoiceProduct invProduct = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
         invProduct.setProfitLoss(new BigDecimal(0));
         invProduct.setInvoice(mapperUtil.convert(invoice, new Invoice()));
-        invoice.setInvoiceProducts(List.of(invoiceProduct));
         invoice.setPrice(invoiceProduct.getPrice());
         BigDecimal tax = invoiceProduct.getPrice().multiply(invoiceProduct.getTax());
         invoice.setTax(tax);
@@ -115,7 +114,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void delete(Long productId) {
+    public void deletePurchaseProduct(Long productId) {
         InvoiceProduct invoiceProduct = invoiceProductRepository.findById(productId).get();
         invoiceProduct.setDeleted(true);
         invoiceProduct.setPrice(new BigDecimal(0));

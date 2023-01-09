@@ -2,7 +2,6 @@ package com.cydeo.javahedgehogsproject.controller;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
-import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
@@ -90,17 +89,18 @@ public class PurchaseInvoiceController {
     public String createInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProduct, BindingResult bindingResult, Model model) {
        if (bindingResult.hasErrors()){
            model.addAttribute("invoice", invoiceService.findById(invoiceId));
+           model.addAttribute("vendors", clientVendorService.findAllVendors());
            model.addAttribute("products", productService.listAllProducts());
            model.addAttribute("invoiceProducts", invoiceProductService.findAllById(invoiceId));
            return "/invoice/purchase-invoice-update";
        }
-        invoiceProductService.saveByInvoiceId(invoiceProduct, invoiceId);
+        invoiceProductService.savePurchaseProductByInvoiceId(invoiceProduct, invoiceId);
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
 
     @GetMapping("/removeInvoiceProduct/{invoiceId}/{productId}")
     public String removeProduct(@PathVariable Long productId, @PathVariable Long invoiceId) {
-        invoiceProductService.delete(productId);
+        invoiceProductService.deletePurchaseProduct(productId);
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
 }
