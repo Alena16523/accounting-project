@@ -28,6 +28,8 @@ public interface InvoiceService {
 
     InvoiceDto save(InvoiceDto invoiceDto);
 
+    void approvePurchaseInvoice(Long purchaseInvoiceId);
+
 
 
 }

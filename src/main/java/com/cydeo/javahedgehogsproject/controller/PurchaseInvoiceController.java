@@ -96,4 +96,14 @@ public class PurchaseInvoiceController {
         invoiceProductService.delete(productId);
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
+
+    @GetMapping("/approve/{id}")
+    public String approvePurchaseInvoice(@PathVariable("id") Long purchaseInvoiceId){
+
+       invoiceService.approvePurchaseInvoice(purchaseInvoiceId);
+
+       return "redirect:/purchaseInvoices/list";
+    }
+
+
 }
