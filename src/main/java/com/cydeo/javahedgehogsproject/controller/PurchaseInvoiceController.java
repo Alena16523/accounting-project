@@ -12,10 +12,13 @@ import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/purchaseInvoices")
@@ -60,7 +63,7 @@ public class PurchaseInvoiceController {
 
         invoiceService.savePurchaseInvoice(newPurchaseInvoice);
 
-        return "redirect:/purchaseInvoices/update/"+newPurchaseInvoice.getId();
+        return "redirect:/purchaseInvoices/update/" + newPurchaseInvoice.getId();
     }
 
     @GetMapping("/update/{invoiceId}")
@@ -78,15 +81,19 @@ public class PurchaseInvoiceController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateInvoice(@ModelAttribute("invoice") InvoiceDto invoice, Model model) {
-        model.addAttribute("vendors", clientVendorService.findAllVendors());
+    public String updateInvoice(@ModelAttribute("invoice") InvoiceDto invoice) {
         invoiceService.update(invoice);
         return "redirect:/purchaseInvoices/list";
     }
 
     @PostMapping("/addInvoiceProduct/{invoiceId}")
-    public String createInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProduct, Model model) {
-        model.addAttribute("products", productService.listAllProducts());
+    public String createInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProduct, BindingResult bindingResult, Model model) {
+       if (bindingResult.hasErrors()){
+           model.addAttribute("invoice", invoiceService.findById(invoiceId));
+           model.addAttribute("products", productService.listAllProducts());
+           model.addAttribute("invoiceProducts", invoiceProductService.findAllById(invoiceId));
+           return "/invoice/purchase-invoice-update";
+       }
         invoiceProductService.saveByInvoiceId(invoiceProduct, invoiceId);
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
