@@ -17,5 +17,7 @@ public interface InvoiceService {
 
     void update(InvoiceDto invoice);
 
+    void delete(Long id);
+
 
 }

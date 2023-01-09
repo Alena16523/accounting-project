@@ -4,6 +4,9 @@ import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
+import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.entity.Invoice;
+import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
@@ -116,5 +120,21 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProduct.setTax(new BigDecimal(0));
 
         invoiceProductRepository.save(invoiceProduct);
+    }
+
+    @Override
+    public void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto) {
+        //go to DB find that invoice:
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
+        //find all invoiceProducts belongs to that invoice:
+        List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
+        //delete one by one all invoiceProducts that we found base on the id:
+        listInvoiceProducts.forEach(invoiceProduct -> {
+            Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
+            if(foundInvoiceProduct.isPresent()){
+                foundInvoiceProduct.get().setDeleted(true);
+                invoiceProductRepository.save(foundInvoiceProduct.get());
+            }
+        });
     }
 }
