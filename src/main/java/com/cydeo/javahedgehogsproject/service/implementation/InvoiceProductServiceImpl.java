@@ -1,6 +1,8 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
@@ -136,5 +138,33 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                 invoiceProductRepository.save(foundInvoiceProduct.get());
             }
         });
+    }
+    @Override
+    public void saveProduct(InvoiceProductDto invoiceProductDto, Long id) {
+
+        InvoiceDto invoiceDto = invoiceService.findById(id);
+        InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
+        invoiceProduct.setProfitLoss(new BigDecimal(0));
+        invoiceProduct.setInvoice(mapperUtil.convert(invoiceDto, new Invoice()));
+        invoiceDto.setInvoiceProducts(List.of(invoiceProductDto));
+        invoiceDto.setPrice(invoiceProductDto.getPrice());
+        BigDecimal tax = invoiceProductDto.getPrice().multiply(invoiceProductDto.getTax());
+        invoiceDto.setTax(tax);
+        invoiceDto.setTotal(invoiceProductDto.getTotal());
+        invoiceProductRepository.save(invoiceProduct);
+
+
+    }
+
+    @Override
+    public void deleteSalesInvoiceProduct(Long invoiceProductId) {
+
+        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductId).get();
+        invoiceProduct.setDeleted(true);
+        invoiceProduct.setPrice(new BigDecimal(0));
+        invoiceProduct.setTax(new BigDecimal(0));
+        invoiceProductRepository.save(invoiceProduct);
+
+
     }
 }

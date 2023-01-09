@@ -20,4 +20,10 @@ public interface InvoiceProductService {
 
     void delete(Long productId);
     void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
+
+    void saveProduct(InvoiceProductDto invoiceProductDto,Long id);
+
+    void deleteSalesInvoiceProduct(Long invoiceProductId);
+
+
 }

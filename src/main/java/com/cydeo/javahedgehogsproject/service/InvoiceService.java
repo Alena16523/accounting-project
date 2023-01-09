@@ -11,6 +11,10 @@ public interface InvoiceService {
 
     List<InvoiceDto> findAllInvoice(InvoiceType invoiceType);
 
+    InvoiceDto getNewSalesInvoice(InvoiceType invoiceType);
+
+    String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId);
+
     InvoiceDto getNewInvoice(InvoiceType invoiceType);
 
     String InvoiceNo(InvoiceType invoiceType, Long companyId);
@@ -18,6 +22,9 @@ public interface InvoiceService {
     void update(InvoiceDto invoice);
 
     void delete(Long id);
+
+    InvoiceDto save(InvoiceDto invoiceDto);
+
 
 
 }
