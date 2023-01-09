@@ -25,5 +25,7 @@ public interface InvoiceProductService {
 
     void deleteSalesInvoiceProduct(Long invoiceProductId);
 
+    void approvePurchaseInvoice(Long purchaseInvoiceId);
+
 
 }

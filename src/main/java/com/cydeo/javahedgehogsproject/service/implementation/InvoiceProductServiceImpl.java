@@ -2,8 +2,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.entity.Invoice;
-import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
+import com.cydeo.javahedgehogsproject.entity.*;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
@@ -22,7 +21,6 @@ import java.util.Optional;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 
@@ -165,6 +163,25 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProduct.setTax(new BigDecimal(0));
         invoiceProductRepository.save(invoiceProduct);
 
+
+    }
+
+    @Override
+    public void approvePurchaseInvoice(Long purchaseInvoiceId) {
+
+        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(purchaseInvoiceId);
+        if (invoiceProducts.size()>0) {
+            for (InvoiceProduct eachInvoiceProduct : invoiceProducts) {
+                Product product = eachInvoiceProduct.getProduct();
+                product.setQuantityInStock(product.getQuantityInStock() + eachInvoiceProduct.getQuantity());
+
+                InvoiceProductDto invoiceProductDto = mapperUtil.convert(eachInvoiceProduct, new InvoiceProductDto());
+
+                invoiceProductRepository.save(mapperUtil.convert(invoiceProductDto, new InvoiceProduct()));
+            }
+        }else{
+                throw new RuntimeException("Purchase invoice has no products.");
+            }
 
     }
 }

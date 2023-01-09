@@ -4,8 +4,10 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
+import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
@@ -85,6 +87,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceDto.setId(invoice.getId());
 
         return invoiceDto;
+    }
+
+    @Override
+    public void approvePurchaseInvoice(Long purchaseInvoiceId){
+
+        Invoice invoice= invoiceRepository.findById(purchaseInvoiceId).get();
+            invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+            invoice.setDate(LocalDate.now());
+            invoiceProductService.approvePurchaseInvoice(purchaseInvoiceId);
+            invoiceRepository.save(invoice);
+
     }
 
 
