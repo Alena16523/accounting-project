@@ -6,8 +6,8 @@ import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
-import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
@@ -73,13 +73,19 @@ public class InvoiceServiceImpl implements InvoiceService {
 
 
     @Override
-    public void approveSalesInvoice(Long invoiceId) {
-        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
-        invoiceProductService.reduceQuantityOfProduct(invoiceId);
-        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
-        invoice.setDate(LocalDate.now());
+    public InvoiceDto save(InvoiceDto invoiceDto) {
+
+        CompanyDto company = securityService.getLoggedInCompany();
+        invoiceDto.setCompany(company);
+        invoiceDto.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+        invoiceDto.setInvoiceType(InvoiceType.SALES);
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
         invoiceRepository.save(invoice);
+        invoiceDto.setId(invoice.getId());
+
+        return invoiceDto;
     }
+
 
     @Override
     public List<InvoiceDto> findAllInvoice(InvoiceType invoiceType) {
@@ -98,6 +104,50 @@ public class InvoiceServiceImpl implements InvoiceService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(Long id) {
+        Invoice invoice = invoiceRepository.findById(id).get();
+        invoice.setDeleted(true);
+        invoiceRepository.save(invoice);
+        //delete all invoiceProducts belongs to the deleted invoice:
+        invoiceProductService.deleteByInvoice(InvoiceType.SALES,mapperUtil.convert(invoice, new InvoiceDto()));
+    }
+
+    @Override
+    public void update(InvoiceDto invoice) {
+        Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
+        Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
+        convertedInvoice.setId(dbInvoice.getId());
+        convertedInvoice.setInvoiceStatus(dbInvoice.getInvoiceStatus());
+        convertedInvoice.setInvoiceType(dbInvoice.getInvoiceType());
+        convertedInvoice.setCompany(dbInvoice.getCompany());
+        invoiceRepository.save(convertedInvoice);
+    }
+    @Override
+    public InvoiceDto getNewSalesInvoice(InvoiceType invoiceType) {
+
+        Long companyId = securityService.getLoggedInUser().getCompany().getId();
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceNo(createInvoiceNoForSalesInvoice(invoiceType, companyId));
+        invoice.setDate(LocalDate.now());
+        return mapperUtil.convert(invoice, new InvoiceDto());
+    }
+
+    @Override
+    public String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId) {
+        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
+
+        String saleInvoiceNo = "";
+
+        if (invoiceType.getValue().equals("Sales")) {
+            saleInvoiceNo = "S-" + "00" + (id + 1);
+        }
+
+        return saleInvoiceNo;
+    }
+
 
 }
+
+
 
