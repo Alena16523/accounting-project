@@ -52,6 +52,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void save(ProductDto productDto) {
         productDto.getCategory().setHasProduct(false);
+        productDto.setQuantityInStock(0);
         Product product = mapperUtil.convert(productDto, new Product());
         productRepository.save(product);
     }
@@ -103,6 +104,12 @@ public class ProductServiceImpl implements ProductService {
         return mapperUtil.convert(product, new ProductDto());
     }
     }
+
+    }
+
+
+
+
 
 
 

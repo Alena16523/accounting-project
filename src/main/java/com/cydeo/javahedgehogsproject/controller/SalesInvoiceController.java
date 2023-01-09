@@ -4,15 +4,14 @@ import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
-import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
+import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-
 
 @Controller
 @RequestMapping("/salesInvoices")
@@ -29,7 +28,6 @@ public class SalesInvoiceController {
         this.productService = productService;
         this.clientVendorService = clientVendorService;
     }
-
 
     @GetMapping("/list")
     public String listAllSalesInvoice(Model model){
@@ -51,11 +49,19 @@ public class SalesInvoiceController {
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
         model.addAttribute("invoiceProducts", invoiceProductService.findAllInvoiceProducts(id));
-       model.addAttribute("products", productService.findAll());
+        model.addAttribute("products", productService.findAll());
         model.addAttribute("clients", clientVendorService.findAllClients());
 
         return "invoice/sales-invoice-update";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteSalesInvoices(@PathVariable("id")Long id) {
+        invoiceService.delete(id);
+        return "redirect:/salesInvoices/list";
+    }
+
+}
 
 
     @PostMapping("/create")

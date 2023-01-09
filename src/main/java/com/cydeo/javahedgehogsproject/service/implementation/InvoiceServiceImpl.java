@@ -1,6 +1,8 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+
 import java.util.stream.Collectors;
 
 @Service
@@ -26,19 +29,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final MapperUtil mapperUtil;
     final private SecurityService securityService;
+    private final ProductRepository productRepository;
     private final InvoiceProductService invoiceProductService;
     private final InvoiceProductRepository invoiceProductRepository;
-    private final ProductRepository productRepository;
 
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, MapperUtil mapperUtil, SecurityService securityService, ProductRepository productRepository, InvoiceProductService invoiceProductService, InvoiceProductRepository invoiceProductRepository) {
-
         this.invoiceRepository = invoiceRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
         this.productRepository = productRepository;
         this.invoiceProductService = invoiceProductService;
         this.invoiceProductRepository = invoiceProductRepository;
-
     }
 
 
@@ -103,6 +104,25 @@ public class InvoiceServiceImpl implements InvoiceService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(Long id) {
+        Invoice invoice = invoiceRepository.findById(id).get();
+        invoice.setDeleted(true);
+        invoiceRepository.save(invoice);
+        //delete all invoiceProducts belongs to the deleted invoice:
+        invoiceProductService.deleteByInvoice(InvoiceType.SALES,mapperUtil.convert(invoice, new InvoiceDto()));
+    }
+
+    @Override
+    public void update(InvoiceDto invoice) {
+        Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
+        Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
+        convertedInvoice.setId(dbInvoice.getId());
+        convertedInvoice.setInvoiceStatus(dbInvoice.getInvoiceStatus());
+        convertedInvoice.setInvoiceType(dbInvoice.getInvoiceType());
+        convertedInvoice.setCompany(dbInvoice.getCompany());
+        invoiceRepository.save(convertedInvoice);
+    }
     @Override
     public InvoiceDto getNewSalesInvoice(InvoiceType invoiceType) {
 
