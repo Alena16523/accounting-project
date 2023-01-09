@@ -3,6 +3,8 @@ package com.cydeo.javahedgehogsproject.entity;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import lombok.*;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -11,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-
+@Where(clause = "is_deleted=false")
 public class Invoice extends BaseEntity{
 
     private String invoiceNo;
