@@ -1,13 +1,12 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+import com.cydeo.javahedgehogsproject.entity.*;
 import com.cydeo.javahedgehogsproject.dto.*;
-import com.cydeo.javahedgehogsproject.entity.Invoice;
-import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
+import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
-import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.enums.InvoiceType;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
@@ -19,9 +18,6 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
-
-import com.cydeo.javahedgehogsproject.entity.Company;
-import com.cydeo.javahedgehogsproject.service.SecurityService;
 
 @Service
 public class InvoiceProductServiceImpl implements InvoiceProductService {
@@ -38,6 +34,47 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         this.securityService = securityService;
         this.invoiceService = invoiceService;
         this.productService = productService;
+    }
+
+    @Override
+    public List<InvoiceProductDto> findAllById(Long id) {
+        CompanyDto loggedInCompany = securityService.getLoggedInCompany();
+        Company company = mapperUtil.convert(loggedInCompany, new Company());
+
+        return invoiceProductRepository.findAllByInvoice_CompanyAndInvoiceId(company, id).stream()
+                .filter(invoiceProduct -> !invoiceProduct.isDeleted())
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
+                .peek(invoiceProductDto -> invoiceProductDto.setTotal(calculate(invoiceProductDto)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId) {
+        List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProductDto> DtoList = invoiceProductList.stream().map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto())).collect(Collectors.toList());
+        for (InvoiceProductDto each : DtoList) {
+            BigDecimal x = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice());
+            BigDecimal y = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice()).multiply(each.getTax()).divide(BigDecimal.valueOf(100));
+            each.setTotal(x.add(y).setScale(2, RoundingMode.CEILING));
+
+        }
+        return DtoList;
+    }
+
+    @Override
+    public void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto) {
+        //go to DB find that invoice:
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
+        //find all invoiceProducts belongs to that invoice:
+        List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
+        //delete one by one all invoiceProducts that we found base on the id:
+        listInvoiceProducts.forEach(invoiceProduct -> {
+            Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
+            if (foundInvoiceProduct.isPresent()) {
+                foundInvoiceProduct.get().setDeleted(true);
+                invoiceProductRepository.save(foundInvoiceProduct.get());
+            }
+        });
     }
 
     @Override
@@ -63,58 +100,20 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public InvoiceService findAllByInvoice(Long id) {
-        return null;
-    }
-
-    @Override
-    public List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId) {
-        List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoiceId(invoiceId);
-        List<InvoiceProductDto> DtoList = invoiceProductList.stream().map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto())).collect(Collectors.toList());
-        for (InvoiceProductDto each : DtoList) {
-            BigDecimal x = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice());
-            BigDecimal y = BigDecimal.valueOf(each.getQuantity()).multiply(each.getPrice()).multiply(each.getTax()).divide(BigDecimal.valueOf(100));
-            each.setTotal(x.add(y).setScale(2, RoundingMode.CEILING));
-
-        }
-        return DtoList;
-    }
-
-    @Override
-    public List<InvoiceProductDto> findAllById(Long id) {
-        CompanyDto loggedInCompany = securityService.getLoggedInCompany();
-        Company company = mapperUtil.convert(loggedInCompany, new Company());
-
-        return invoiceProductRepository.findAllByInvoice_CompanyAndInvoiceId(company, id).stream()
-                .filter(invoiceProduct -> !invoiceProduct.isDeleted())
-                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
-                .peek(invoiceProductDto -> invoiceProductDto.setTotal(calculate(invoiceProductDto)))
-                .collect(Collectors.toList());
-    }
-
-    private BigDecimal calculate(InvoiceProductDto invoiceProductDto) {
-        BigDecimal totalWithOutTax = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity()));
-        BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(invoiceProductDto.getTax()).divide(new BigDecimal(100));
-
-        return totalWithOutTax.add(taxAmount).setScale(2, RoundingMode.CEILING);
-    }
-
-    @Override
-    public void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id) {
+    public void savePurchaseProductByInvoiceId(InvoiceProductDto invoiceProduct, Long id) {
         InvoiceDto invoice = invoiceService.findById(id);
-        InvoiceProduct product = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
-        product.setProfitLoss(new BigDecimal(0));
-        product.setInvoice(mapperUtil.convert(invoice, new Invoice()));
-        invoice.setInvoiceProducts(List.of(invoiceProduct));
+        InvoiceProduct invProduct = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
+        invProduct.setProfitLoss(new BigDecimal(0));
+        invProduct.setInvoice(mapperUtil.convert(invoice, new Invoice()));
         invoice.setPrice(invoiceProduct.getPrice());
         BigDecimal tax = invoiceProduct.getPrice().multiply(invoiceProduct.getTax());
         invoice.setTax(tax);
         invoice.setTotal(invoiceProduct.getTotal());
-        invoiceProductRepository.save(product);
+        invoiceProductRepository.save(invProduct);
     }
 
     @Override
-    public void delete(Long productId) {
+    public void deletePurchaseProduct(Long productId) {
         InvoiceProduct invoiceProduct = invoiceProductRepository.findById(productId).get();
         invoiceProduct.setDeleted(true);
         invoiceProduct.setPrice(new BigDecimal(0));
@@ -124,24 +123,24 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto) {
-        //go to DB find that invoice:
-        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
-        //find all invoiceProducts belongs to that invoice:
-        List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
-        //delete one by one all invoiceProducts that we found base on the id:
-        listInvoiceProducts.forEach(invoiceProduct -> {
-            Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
-            if (foundInvoiceProduct.isPresent()) {
-                foundInvoiceProduct.get().setDeleted(true);
-                invoiceProductRepository.save(foundInvoiceProduct.get());
+    public void approvePurchaseInvoice(Long purchaseInvoiceId) {
+        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(purchaseInvoiceId);
+        if (invoiceProducts.size() > 0) {
+            for (InvoiceProduct eachInvoiceProduct : invoiceProducts) {
+                Product product = eachInvoiceProduct.getProduct();
+                product.setQuantityInStock(product.getQuantityInStock() + eachInvoiceProduct.getQuantity());
+
+                InvoiceProductDto invoiceProductDto = mapperUtil.convert(eachInvoiceProduct, new InvoiceProductDto());
+
+                invoiceProductRepository.save(mapperUtil.convert(invoiceProductDto, new InvoiceProduct()));
             }
-        });
+        } else {
+            throw new RuntimeException("Purchase invoice has no products.");
+        }
     }
 
     @Override
     public void saveProduct(InvoiceProductDto invoiceProductDto, Long id) {
-
         InvoiceDto invoiceDto = invoiceService.findById(id);
         InvoiceProduct invoiceProduct = mapperUtil.convert(invoiceProductDto, new InvoiceProduct());
         invoiceProduct.setProfitLoss(new BigDecimal(0));
@@ -152,20 +151,15 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceDto.setTax(tax);
         invoiceDto.setTotal(invoiceProductDto.getTotal());
         invoiceProductRepository.save(invoiceProduct);
-
-
     }
 
     @Override
     public void deleteSalesInvoiceProduct(Long invoiceProductId) {
-
         InvoiceProduct invoiceProduct = invoiceProductRepository.findById(invoiceProductId).get();
         invoiceProduct.setDeleted(true);
         invoiceProduct.setPrice(new BigDecimal(0));
         invoiceProduct.setTax(new BigDecimal(0));
         invoiceProductRepository.save(invoiceProduct);
-
-
     }
 
     @Override
@@ -206,6 +200,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return invoiceProductRepository
                 .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
                         InvoiceStatus.APPROVED, mapperUtil.convert(company, new Company()));
+    }
+
+    private BigDecimal calculate(InvoiceProductDto invoiceProductDto) {
+        BigDecimal totalWithOutTax = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity()));
+        BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(invoiceProductDto.getTax()).divide(new BigDecimal(100));
+
+        return totalWithOutTax.add(taxAmount).setScale(2, RoundingMode.CEILING);
     }
 
 }

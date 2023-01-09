@@ -11,21 +11,23 @@ public interface InvoiceService {
 
     List<InvoiceDto> findAllInvoice(InvoiceType invoiceType);
 
-    InvoiceDto getNewSalesInvoice(InvoiceType invoiceType);
+    String InvoiceNo(InvoiceType invoiceType, Long companyId);
 
     String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId);
 
     InvoiceDto getNewInvoice(InvoiceType invoiceType);
 
-    String InvoiceNo(InvoiceType invoiceType, Long companyId);
+    InvoiceDto getNewSalesInvoice(InvoiceType invoiceType);
+
+    void savePurchaseInvoice(InvoiceDto purchaseInvoice);
+
+    InvoiceDto save(InvoiceDto invoiceDto);
 
     void update(InvoiceDto invoice);
 
     void delete(Long id);
 
-    void savePurchaseInvoice(InvoiceDto purchaseInvoice);
-
-    InvoiceDto save(InvoiceDto invoiceDto);
+    void approvePurchaseInvoice(Long purchaseInvoiceId);
 
     void approveSalesInvoice(Long invoiceId);
 

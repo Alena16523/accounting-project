@@ -11,21 +11,21 @@ import java.util.List;
 
 public interface InvoiceProductService {
 
+    List<InvoiceProductDto> findAllById(Long id);
+
+    List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId);
+
+    void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
+
     BigDecimal totalTax(Long invoiceId);
 
     BigDecimal totalPriceWithoutTax(Long invoiceId);
 
-    InvoiceService findAllByInvoice(Long id);
+    void savePurchaseProductByInvoiceId(InvoiceProductDto invoiceProduct, Long id);
 
-    List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId);
+    void deletePurchaseProduct(Long productId);
 
-    List<InvoiceProductDto> findAllById(Long id);
-
-    void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id);
-
-    void delete(Long productId);
-
-    void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
+    void approvePurchaseInvoice(Long purchaseInvoiceId);
 
     void saveProduct(InvoiceProductDto invoiceProductDto, Long id);
 

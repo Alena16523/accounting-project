@@ -34,45 +34,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceDto findById(long id) {
-        Invoice invoice = invoiceRepository.findById(id).get();
-        return mapperUtil.convert(invoice, new InvoiceDto());
-    }
-
-    @Override
-    public InvoiceDto getNewInvoice(InvoiceType invoiceType) {
-        Long companyId = securityService.getLoggedInUser().getCompany().getId();
-        Invoice invoice = new Invoice();
-        invoice.setInvoiceNo(InvoiceNo(invoiceType, companyId));
-        invoice.setDate(LocalDate.now());
-        return mapperUtil.convert(invoice, new InvoiceDto());
-    }
-
-    @Override
-    public String InvoiceNo(InvoiceType invoiceType, Long companyId) {
-
-        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
-        String InvoiceNo = "";
-
-        if (invoiceType.getValue().equals("Purchase")) {
-            InvoiceNo = "P-" + "00" + (id + 1);
-        }
-
-        return InvoiceNo;
-    }
-
-
-    @Override
-    public InvoiceDto save(InvoiceDto invoiceDto) {
-
-        CompanyDto company = securityService.getLoggedInCompany();
-        invoiceDto.setCompany(company);
-        invoiceDto.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
-        invoiceDto.setInvoiceType(InvoiceType.SALES);
-        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
-        invoiceRepository.save(invoice);
-        invoiceDto.setId(invoice.getId());
-
-        return invoiceDto;
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow();
+        return mapperUtil.convert(invoiceRepository.findById(id), new InvoiceDto());
     }
 
     @Override
@@ -93,12 +56,48 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public void delete(Long id) {
-        Invoice invoice = invoiceRepository.findById(id).get();
-        invoice.setDeleted(true);
-        invoiceRepository.save(invoice);
-        //delete all invoiceProducts belongs to the deleted invoice:
-        invoiceProductService.deleteByInvoice(InvoiceType.SALES, mapperUtil.convert(invoice, new InvoiceDto()));
+    public String InvoiceNo(InvoiceType invoiceType, Long companyId) {
+
+        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
+        String InvoiceNo = "";
+
+        if (invoiceType.getValue().equals("Purchase")) {
+            InvoiceNo = "P-" + "00" + (id + 1);
+        }
+
+        return InvoiceNo;
+    }
+
+    @Override
+    public String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId) {
+        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
+
+        String saleInvoiceNo = "";
+
+        if (invoiceType.getValue().equals("Sales")) {
+            saleInvoiceNo = "S-" + "00" + (id + 1);
+        }
+
+        return saleInvoiceNo;
+    }
+
+    @Override
+    public InvoiceDto getNewInvoice(InvoiceType invoiceType) {
+        Long companyId = securityService.getLoggedInUser().getCompany().getId();
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceNo(InvoiceNo(invoiceType, companyId));
+        invoice.setDate(LocalDate.now());
+        return mapperUtil.convert(invoice, new InvoiceDto());
+    }
+
+    @Override
+    public InvoiceDto getNewSalesInvoice(InvoiceType invoiceType) {
+
+        Long companyId = securityService.getLoggedInUser().getCompany().getId();
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceNo(createInvoiceNoForSalesInvoice(invoiceType, companyId));
+        invoice.setDate(LocalDate.now());
+        return mapperUtil.convert(invoice, new InvoiceDto());
     }
 
     @Override
@@ -116,6 +115,20 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public InvoiceDto save(InvoiceDto invoiceDto) {
+
+        CompanyDto company = securityService.getLoggedInCompany();
+        invoiceDto.setCompany(company);
+        invoiceDto.setInvoiceStatus(InvoiceStatus.AWAITING_APPROVAL);
+        invoiceDto.setInvoiceType(InvoiceType.SALES);
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
+        invoiceRepository.save(invoice);
+        invoiceDto.setId(invoice.getId());
+
+        return invoiceDto;
+    }
+
+    @Override
     public void update(InvoiceDto invoice) {
         Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
         Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
@@ -127,26 +140,23 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDto getNewSalesInvoice(InvoiceType invoiceType) {
-
-        Long companyId = securityService.getLoggedInUser().getCompany().getId();
-        Invoice invoice = new Invoice();
-        invoice.setInvoiceNo(createInvoiceNoForSalesInvoice(invoiceType, companyId));
-        invoice.setDate(LocalDate.now());
-        return mapperUtil.convert(invoice, new InvoiceDto());
+    public void delete(Long id) {
+        Invoice invoice = invoiceRepository.findById(id).get();
+        invoice.setDeleted(true);
+        invoiceRepository.save(invoice);
+        //delete all invoiceProducts belongs to the deleted invoice:
+        invoiceProductService.deleteByInvoice(InvoiceType.SALES, mapperUtil.convert(invoice, new InvoiceDto()));
     }
 
     @Override
-    public String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId) {
-        Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
+    public void approvePurchaseInvoice(Long purchaseInvoiceId) {
 
-        String saleInvoiceNo = "";
+        Invoice invoice = invoiceRepository.findById(purchaseInvoiceId).get();
+        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoice.setDate(LocalDate.now());
+        invoiceProductService.approvePurchaseInvoice(purchaseInvoiceId);
+        invoiceRepository.save(invoice);
 
-        if (invoiceType.getValue().equals("Sales")) {
-            saleInvoiceNo = "S-" + "00" + (id + 1);
-        }
-
-        return saleInvoiceNo;
     }
 
     @Override
