@@ -37,14 +37,14 @@ public class SalesInvoiceController {
 
     @GetMapping("/create")
     public String createSalesInvoice(Model model){
-        model.addAttribute("newSalesInvoice",new InvoiceDto());
+        model.addAttribute("newSalesInvoice",invoiceService.getNewSalesInvoice(InvoiceType.SALES));
         model.addAttribute("clients",clientVendorService.findAllClients());
         return "/invoice/sales-invoice-create";
     }
 
 
     @GetMapping("/update/{id}")
-    public String editSalesInvoice(@PathVariable Long id, Model model) throws Exception {
+    public String editSalesInvoice(@PathVariable Long id, Model model)  {
 
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
@@ -61,4 +61,47 @@ public class SalesInvoiceController {
         return "redirect:/salesInvoices/list";
     }
 
+
+
+
+    @PostMapping("/create")
+    public String saveSalesInvoice(@ModelAttribute("newSalesInvoice") InvoiceDto invoiceDto) {
+
+        InvoiceDto invoiceDtoId = invoiceService.save(invoiceDto);
+
+        return "redirect:/salesInvoices/update/" + invoiceDtoId.getId();
+
+    }
+
+
+    @PostMapping("/addInvoiceProduct/{id}")
+    public String savedInvoiceProduct(@PathVariable("id") Long id, @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, Model model) {
+
+        model.addAttribute("products", productService.listAllProducts());
+        invoiceProductService.saveProduct(invoiceProductDto, id);
+
+
+        return "redirect:/salesInvoices/update/" + id;
+    }
+
+    @GetMapping("/removeInvoiceProduct/{invoiceId}/{invoiceProuductId}")
+    public String removeInvoiceProductFromProductList(@PathVariable("invoiceId") Long invoiceId,@PathVariable("invoiceProuductId") Long invoiceProductId ){
+
+        invoiceProductService.deleteSalesInvoiceProduct(invoiceProductId);
+
+        return "redirect:/salesInvoices/update/" + invoiceId;
+    }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+

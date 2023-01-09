@@ -2,7 +2,6 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.ProductDto;
-import com.cydeo.javahedgehogsproject.entity.Category;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Product;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -40,13 +39,6 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> productList = productRepository.findAllByCategory_CompanyOrderByCategoryAscNameAsc(company);
         return productList.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ProductDto> listAllProductsByCategory(Long categoryId) {
-
-
-        return productRepository.findAllByCategoryId(categoryId).stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
 
 
@@ -87,6 +79,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDto> listAllProductsByCategory(Long categoryId) {
+        return null;
+    }
+
+    @Override
     public boolean isNameExist(String productName) {
         boolean isExist = productRepository.findAll().stream().anyMatch(product -> product.getName().equals(productName));
 
@@ -107,6 +104,10 @@ public class ProductServiceImpl implements ProductService {
         return mapperUtil.convert(product, new ProductDto());
     }
     }
+
+
+
+
 
 
 
