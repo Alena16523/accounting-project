@@ -1,5 +1,8 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
+
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
+
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+
 
 import java.util.stream.Collectors;
 
@@ -92,6 +96,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceProductService.deleteByInvoice(InvoiceType.SALES,mapperUtil.convert(invoice, new InvoiceDto()));
     }
 
+    @Override
+    public void update(InvoiceDto invoice) {
+        Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
+        Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
+        convertedInvoice.setId(dbInvoice.getId());
+        convertedInvoice.setInvoiceStatus(dbInvoice.getInvoiceStatus());
+        convertedInvoice.setInvoiceType(dbInvoice.getInvoiceType());
+        convertedInvoice.setCompany(dbInvoice.getCompany());
+        invoiceRepository.save(convertedInvoice);
+    }
 
 }
 
