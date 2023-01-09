@@ -57,12 +57,10 @@ public class PurchaseInvoiceController {
 
     @PostMapping("/create")
     public String createNewPurchaseInvoice(@ModelAttribute("newPurchaseInvoice") InvoiceDto newPurchaseInvoice) {
-        Invoice purchaseInvoice = mapperUtil.convert(newPurchaseInvoice, new Invoice());
 
-        //do we need to set nay fields before saving invoice?
+        invoiceService.savePurchaseInvoice(newPurchaseInvoice);
 
-        Invoice save = invoiceRepository.save(purchaseInvoice);
-        return "redirect:/purchaseInvoices/update/" + save.getId();
+        return "redirect:/purchaseInvoices/update/"+newPurchaseInvoice.getId();
     }
 
     @GetMapping("/update/{invoiceId}")
