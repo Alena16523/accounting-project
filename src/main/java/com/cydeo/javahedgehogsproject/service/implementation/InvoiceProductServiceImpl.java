@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 import com.cydeo.javahedgehogsproject.dto.*;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
+import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
@@ -199,4 +200,12 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         // take that result subtract from the invoiceProduct total price
         // and save it as profit/loss
     }
+
+    @Override
+    public List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company) {
+        return invoiceProductRepository
+                .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
+                        InvoiceStatus.APPROVED, mapperUtil.convert(company, new Company()));
+    }
+
 }

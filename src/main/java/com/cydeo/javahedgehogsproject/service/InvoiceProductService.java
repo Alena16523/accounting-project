@@ -1,7 +1,9 @@
 package com.cydeo.javahedgehogsproject.service;
 
+import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 
 import java.math.BigDecimal;
@@ -32,5 +34,7 @@ public interface InvoiceProductService {
     void reduceQuantityOfProduct(Long invoiceId);
 
     void calculateProfitLossForSale(Long invoiceId);
+
+    List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company);
 
 }
