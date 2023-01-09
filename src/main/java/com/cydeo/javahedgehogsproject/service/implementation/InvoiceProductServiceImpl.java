@@ -101,15 +101,15 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     @Override
     public void saveByInvoiceId(InvoiceProductDto invoiceProduct, Long id) {
         InvoiceDto invoice = invoiceService.findById(id);
-        InvoiceProduct product = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
-        product.setProfitLoss(new BigDecimal(0));
-        product.setInvoice(mapperUtil.convert(invoice, new Invoice()));
+        InvoiceProduct invProduct = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
+        invProduct.setProfitLoss(new BigDecimal(0));
+        invProduct.setInvoice(mapperUtil.convert(invoice, new Invoice()));
         invoice.setInvoiceProducts(List.of(invoiceProduct));
         invoice.setPrice(invoiceProduct.getPrice());
         BigDecimal tax = invoiceProduct.getPrice().multiply(invoiceProduct.getTax());
         invoice.setTax(tax);
         invoice.setTotal(invoiceProduct.getTotal());
-        invoiceProductRepository.save(product);
+        invoiceProductRepository.save(invProduct);
     }
 
     @Override
