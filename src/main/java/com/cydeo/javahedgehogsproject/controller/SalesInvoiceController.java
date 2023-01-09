@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/salesInvoices")
 public class SalesInvoiceController {
 
-    private InvoiceService invoiceService;
-    private InvoiceProductService invoiceProductService;
-    private ProductService productService;
-    private ClientVendorService clientVendorService;
+    private final InvoiceService invoiceService;
+    private final InvoiceProductService invoiceProductService;
+    private final ProductService productService;
+    private final ClientVendorService clientVendorService;
 
     public SalesInvoiceController(InvoiceService invoiceService, InvoiceProductService invoiceProductService, ProductService productService, ClientVendorService clientVendorService) {
         this.invoiceService = invoiceService;
@@ -30,21 +30,43 @@ public class SalesInvoiceController {
     }
 
     @GetMapping("/list")
-    public String listAllSalesInvoice(Model model){
-       model.addAttribute("invoices",invoiceService.findAllInvoice(InvoiceType.SALES));
+    public String listAllSalesInvoice(Model model) {
+        model.addAttribute("invoices", invoiceService.findAllInvoice(InvoiceType.SALES));
         return "/invoice/sales-invoice-list";
     }
 
     @GetMapping("/create")
-    public String createSalesInvoice(Model model){
-        model.addAttribute("newSalesInvoice",invoiceService.getNewSalesInvoice(InvoiceType.SALES));
-        model.addAttribute("clients",clientVendorService.findAllClients());
+    public String createSalesInvoice(Model model) {
+        model.addAttribute("newSalesInvoice", invoiceService.getNewSalesInvoice(InvoiceType.SALES));
+        model.addAttribute("clients", clientVendorService.findAllClients());
+
         return "/invoice/sales-invoice-create";
     }
 
+    @PostMapping("/create")
+    public String saveSalesInvoice(@ModelAttribute("newSalesInvoice") InvoiceDto invoiceDto) {
+        InvoiceDto invoiceDtoId = invoiceService.save(invoiceDto);
+
+        return "redirect:/salesInvoices/update/" + invoiceDtoId.getId();
+    }
+
+    @PostMapping("/addInvoiceProduct/{id}")
+    public String savedInvoiceProduct(@PathVariable("id") Long id, @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, Model model) {
+        model.addAttribute("products", productService.listAllProducts());
+        invoiceProductService.saveProduct(invoiceProductDto, id);
+
+        return "redirect:/salesInvoices/update/" + id;
+    }
+
+    @GetMapping("/removeInvoiceProduct/{invoiceId}/{invoiceProductId}")
+    public String removeInvoiceProductFromProductList(@PathVariable("invoiceId") Long invoiceId, @PathVariable("invoiceProductId") Long invoiceProductId) {
+        invoiceProductService.deleteSalesInvoiceProduct(invoiceProductId);
+
+        return "redirect:/salesInvoices/update/" + invoiceId;
+    }
 
     @GetMapping("/update/{id}")
-    public String editSalesInvoice(@PathVariable Long id, Model model)  {
+    public String editSalesInvoice(@PathVariable Long id, Model model) {
 
         model.addAttribute("invoice", invoiceService.findById(id));
         model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
@@ -56,42 +78,16 @@ public class SalesInvoiceController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteSalesInvoices(@PathVariable("id")Long id) {
+    public String deleteSalesInvoices(@PathVariable("id") Long id) {
         invoiceService.delete(id);
         return "redirect:/salesInvoices/list";
     }
 
-
-
-
-    @PostMapping("/create")
-    public String saveSalesInvoice(@ModelAttribute("newSalesInvoice") InvoiceDto invoiceDto) {
-
-        InvoiceDto invoiceDtoId = invoiceService.save(invoiceDto);
-
-        return "redirect:/salesInvoices/update/" + invoiceDtoId.getId();
-
+    @GetMapping("/approve/{id}")
+    public String approveSalesInvoice(@PathVariable("id") Long invoiceId) {
+        invoiceService.approveSalesInvoice(invoiceId);
+        return "redirect:/salesInvoices/list";
     }
-
-
-    @PostMapping("/addInvoiceProduct/{id}")
-    public String savedInvoiceProduct(@PathVariable("id") Long id, @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, Model model) {
-
-        model.addAttribute("products", productService.listAllProducts());
-        invoiceProductService.saveProduct(invoiceProductDto, id);
-
-
-        return "redirect:/salesInvoices/update/" + id;
-    }
-
-    @GetMapping("/removeInvoiceProduct/{invoiceId}/{invoiceProuductId}")
-    public String removeInvoiceProductFromProductList(@PathVariable("invoiceId") Long invoiceId,@PathVariable("invoiceProuductId") Long invoiceProductId ){
-
-        invoiceProductService.deleteSalesInvoiceProduct(invoiceProductId);
-
-        return "redirect:/salesInvoices/update/" + invoiceId;
-    }
-
 
 }
 

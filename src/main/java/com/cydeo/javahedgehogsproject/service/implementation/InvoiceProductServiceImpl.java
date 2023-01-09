@@ -1,16 +1,15 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
-import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.*;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
+import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
-import com.cydeo.javahedgehogsproject.dto.CompanyDto;
-import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
-import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.service.SecurityService;
 
 @Service
@@ -33,12 +29,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final MapperUtil mapperUtil;
     private final SecurityService securityService;
     private final InvoiceService invoiceService;
+    private final ProductService productService;
 
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, SecurityService securityService,@Lazy InvoiceService invoiceService) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, MapperUtil mapperUtil, SecurityService securityService, @Lazy InvoiceService invoiceService, ProductService productService) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
         this.invoiceService = invoiceService;
+        this.productService = productService;
     }
 
     @Override
@@ -133,12 +131,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         //delete one by one all invoiceProducts that we found base on the id:
         listInvoiceProducts.forEach(invoiceProduct -> {
             Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
-            if(foundInvoiceProduct.isPresent()){
+            if (foundInvoiceProduct.isPresent()) {
                 foundInvoiceProduct.get().setDeleted(true);
                 invoiceProductRepository.save(foundInvoiceProduct.get());
             }
         });
     }
+
     @Override
     public void saveProduct(InvoiceProductDto invoiceProductDto, Long id) {
 
@@ -166,5 +165,38 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         invoiceProductRepository.save(invoiceProduct);
 
 
+    }
+
+    @Override
+    public void reduceQuantityOfProduct(Long invoiceId) {
+        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
+                .collect(Collectors.toList());
+
+        int totalQuantity = 0;
+        for (InvoiceProductDto each : invoiceProductDtos) {
+            totalQuantity += each.getQuantity();
+        }
+
+        for (InvoiceProductDto each : invoiceProductDtos) {
+            ProductDto productDto = productService.findById(each.getProduct().getId());
+            if (productDto.getQuantityInStock() >= totalQuantity) {
+                productDto.setQuantityInStock(productDto.getQuantityInStock() - totalQuantity);
+                productService.save(productDto);
+            } else {
+                throw new IllegalArgumentException("Product quantity is not enough!");
+            }
+        }
+    }
+
+    @Override
+    public void calculateProfitLossForSale(Long invoiceId) {
+        // go to purchase invoice find the approved one
+        // check the product is matching with sale invoice
+        // then take the quantity amount that I want to sell
+        // and based on that quantity calculate the price (quantity*price+(quantity*price*tax/100))
+        // take that result subtract from the invoiceProduct total price
+        // and save it as profit/loss
     }
 }
