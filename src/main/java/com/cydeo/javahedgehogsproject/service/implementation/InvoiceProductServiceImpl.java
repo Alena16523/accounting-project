@@ -163,26 +163,37 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
+    public boolean checkQuantityAmount(Long invoiceId) {
+        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
+                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
+                .collect(Collectors.toList());
+
+        for (InvoiceProductDto each : invoiceProductDtos) {
+            ProductDto productDto = productService.findById(each.getProduct().getId());
+
+            if (productDto.getQuantityInStock() < each.getQuantity()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public void reduceQuantityOfProduct(Long invoiceId) {
         List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
         List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
                 .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
                 .collect(Collectors.toList());
 
-        int totalQuantity = 0;
-        for (InvoiceProductDto each : invoiceProductDtos) {
-            totalQuantity += each.getQuantity();
-        }
-
         for (InvoiceProductDto each : invoiceProductDtos) {
             ProductDto productDto = productService.findById(each.getProduct().getId());
-            if (productDto.getQuantityInStock() >= totalQuantity) {
-                productDto.setQuantityInStock(productDto.getQuantityInStock() - totalQuantity);
-                productService.save(productDto);
-            } else {
-                throw new IllegalArgumentException("Product quantity is not enough!");
-            }
+
+            productDto.setQuantityInStock(productDto.getQuantityInStock() - each.getQuantity());
+
+            productService.save(productDto);
         }
+
     }
 
     @Override
