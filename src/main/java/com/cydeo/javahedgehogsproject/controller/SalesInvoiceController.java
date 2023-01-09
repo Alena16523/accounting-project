@@ -61,7 +61,7 @@ public class SalesInvoiceController {
         return "redirect:/salesInvoices/list";
     }
 
-}
+
 
 
     @PostMapping("/create")
