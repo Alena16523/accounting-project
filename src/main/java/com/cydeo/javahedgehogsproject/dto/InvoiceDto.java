@@ -3,6 +3,7 @@ package com.cydeo.javahedgehogsproject.dto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,7 @@ public class InvoiceDto {
     private String invoiceNo;
     private InvoiceStatus invoiceStatus;
     private InvoiceType invoiceType;
+    @DateTimeFormat(pattern = "MMMM dd, yyyy")
     private LocalDate date;
     private CompanyDto company;
     private ClientVendorDto clientVendor;
