@@ -35,7 +35,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto findById(long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow();
-        return mapperUtil.convert(invoiceRepository.findById(id), new InvoiceDto());
+        return mapperUtil.convert(invoice, new InvoiceDto());
     }
 
     @Override
@@ -171,11 +171,35 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void approveSalesInvoice(Long invoiceId) {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
-        invoiceProductService.reduceQuantityOfProduct(invoiceId);
-        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
-        invoice.setDate(LocalDate.now());
-        invoiceProductService.calculateProfitLossForSale(invoiceId);
-        invoiceRepository.save(invoice);
+
+        if (invoiceProductService.checkQuantityAmount(invoiceId)) {
+            invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+            invoice.setDate(LocalDate.now());
+            invoiceProductService.calculateProfitLossForSale(invoiceId);
+            invoiceRepository.save(invoice);
+        } else {
+            InvoiceDto invoiceDto = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDto.setHasNotEnoughProductQuantity(true);
+        }
+
+    }
+
+
+    @Override
+    public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusOrderByInvoiceNoDesc(company, invoiceStatus);
+
+        return invoiceList.stream().map(invoice -> {
+
+            InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDTO.setInvoiceProducts(invoiceProductService.findAllInvoiceProducts(invoice.getId()));
+            invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
+            invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
+            invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
+
+            return invoiceDTO;
+        }).collect(Collectors.toList());
     }
 
 }
