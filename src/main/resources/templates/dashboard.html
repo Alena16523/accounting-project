@@ -141,14 +141,14 @@
                                 <div class="card" style="width:100%;">
                                     <h4 class="card-title text-center">Total Cost</h4>
                                     <div class="card-body mt-0 pt-0 d-flex justify-content-center">
-                                        <div class="progress blue">
+                                        <div class="progress blue" >
                                             <span class="progress-left">
                                                 <span class="progress-bar"></span>
                                             </span>
                                             <span class="progress-right">
                                                 <span class="progress-bar"></span>
                                             </span>
-                                            <div class="progress-value">90%</div>
+                                            <div class="progress-value" th:text="'$'+${dashboardNumbers.get('totalCost')}" style="background-color:Tomato;" ></div>
                                         </div>
                                     </div>
                                 </div>
@@ -164,7 +164,7 @@
                                             <span class="progress-right">
                                                 <span class="progress-bar"></span>
                                             </span>
-                                            <div class="progress-value">90%</div>
+                                            <div class="progress-value" th:text="'$'+${dashboardNumbers.get('totalSales')}" style="background-color:MediumSeaGreen;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@
                                             <span class="progress-right">
                                                 <span class="progress-bar"></span>
                                             </span>
-                                            <div class="progress-value">90%</div>
+                                            <div class="progress-value" th:text="'$'+${dashboardNumbers.get('Profit / Loss')}" style="background-color:DodgerBlue;">90%</div>
                                         </div>
                                     </div>
                                 </div>
