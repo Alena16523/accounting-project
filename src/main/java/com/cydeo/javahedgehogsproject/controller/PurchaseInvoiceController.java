@@ -113,4 +113,12 @@ public class PurchaseInvoiceController {
     }
 
 
+
+    @GetMapping("/delete/{id}")
+    public String deletePurchaseInvoices(@PathVariable("id")Long id) {
+
+        invoiceService.delete(id);
+
+        return "redirect:/purchaseInvoices/list";
+    }
 }
