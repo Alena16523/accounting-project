@@ -35,7 +35,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public InvoiceDto findById(long id) {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow();
-        return mapperUtil.convert(invoiceRepository.findById(id), new InvoiceDto());
+        return mapperUtil.convert(invoice, new InvoiceDto());
     }
 
     @Override
@@ -171,11 +171,17 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void approveSalesInvoice(Long invoiceId) {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
-        invoiceProductService.reduceQuantityOfProduct(invoiceId);
-        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
-        invoice.setDate(LocalDate.now());
-        invoiceProductService.calculateProfitLossForSale(invoiceId);
-        invoiceRepository.save(invoice);
+
+        if (invoiceProductService.checkQuantityAmount(invoiceId)) {
+            invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+            invoice.setDate(LocalDate.now());
+            invoiceProductService.calculateProfitLossForSale(invoiceId);
+            invoiceRepository.save(invoice);
+        } else {
+            InvoiceDto invoiceDto = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDto.setHasNotEnoughProductQuantity(true);
+        }
+
     }
 
 
