@@ -211,13 +211,13 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr th:each="invoice,comStat : ${invoices}">
+                                                <td th:text="${invoice.invoiceNo}"></td>
+                                                <td th:text="${invoice.clientVendor.getClientVendorName}"></td>
+                                                <td th:text="${#temporals.format(invoice.date, 'yyyy-MM-dd')}"></td>
+                                                <td th:text="${invoice.price}"></td>
+                                                <td th:text="${invoice.tax}"></td>
+                                                <td th:text="${invoice.total}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
