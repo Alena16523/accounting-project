@@ -7,6 +7,7 @@ import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,15 @@ public class SalesInvoiceController {
     }
 
     @PostMapping("/addInvoiceProduct/{id}")
-    public String savedInvoiceProduct(@PathVariable("id") Long id, @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, Model model) {
-        model.addAttribute("products", productService.listAllProducts());
+    public String savedInvoiceProduct(@PathVariable("id") Long id, @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProductDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("invoice", invoiceService.findById(id));
+            model.addAttribute("clients", clientVendorService.findAllClients());
+            model.addAttribute("products", productService.listAllProducts());
+            model.addAttribute("invoiceProducts", invoiceProductService.findAllById(id));
+
+            return "/invoice/sales-invoice-update";
+        }
         invoiceProductService.saveProduct(invoiceProductDto, id);
 
         return "redirect:/salesInvoices/update/" + id;
@@ -73,16 +81,25 @@ public class SalesInvoiceController {
     }
 
     @GetMapping("/update/{id}")
-    public String editSalesInvoice(@PathVariable Long id, Model model) {
+    public String editSalesInvoice(@PathVariable("id") Long id, Model model) {
 
         model.addAttribute("invoice", invoiceService.findById(id));
-        model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
-        model.addAttribute("invoiceProducts", invoiceProductService.findAllInvoiceProducts(id));
-        model.addAttribute("products", productService.findAll());
         model.addAttribute("clients", clientVendorService.findAllClients());
+        model.addAttribute("newInvoiceProduct", new InvoiceProductDto());
+        model.addAttribute("products", productService.findAll());
+        model.addAttribute("invoiceProducts", invoiceProductService.findAllInvoiceProducts(id));
+
 
         return "invoice/sales-invoice-update";
+
     }
+    @PostMapping("/update/{id}")
+    public String updateSalesInvoice(@ModelAttribute("invoice")InvoiceDto invoiceDto){
+
+        invoiceService.update(invoiceDto);
+        return "redirect:/salesInvoices/list";
+    }
+
 
     @GetMapping("/delete/{id}")
     public String deleteSalesInvoices(@PathVariable("id") Long id) {
