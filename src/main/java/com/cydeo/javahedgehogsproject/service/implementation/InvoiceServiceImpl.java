@@ -129,6 +129,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public void deletePurchaseInvoice(Long id) {
+
+        Invoice invoice = invoiceRepository.findById(id).get();
+        invoice.setDeleted(true);
+        invoiceRepository.save(invoice);
+        invoiceProductService.deleteByInvoice(InvoiceType.PURCHASE,mapperUtil.convert(invoice, new InvoiceDto()));
+    }
+
+    @Override
     public void update(InvoiceDto invoice) {
         Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
         Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
@@ -173,6 +182,24 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceDto.setHasNotEnoughProductQuantity(true);
         }
 
+    }
+
+
+    @Override
+    public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusOrderByInvoiceNoDesc(company, invoiceStatus);
+
+        return invoiceList.stream().map(invoice -> {
+
+            InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDTO.setInvoiceProducts(invoiceProductService.findAllInvoiceProducts(invoice.getId()));
+            invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
+            invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
+            invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
+
+            return invoiceDTO;
+        }).collect(Collectors.toList());
     }
 
 }
