@@ -129,6 +129,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public void deletePurchaseInvoice(Long id) {
+
+        Invoice invoice = invoiceRepository.findById(id).get();
+        invoice.setDeleted(true);
+        invoiceRepository.save(invoice);
+        invoiceProductService.deleteByInvoice(InvoiceType.PURCHASE,mapperUtil.convert(invoice, new InvoiceDto()));
+    }
+
+    @Override
     public void update(InvoiceDto invoice) {
         Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
         Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
