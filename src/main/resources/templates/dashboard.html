@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" >
 
 <head th:replace="/fragments/head :: header"></head>
 <head>
@@ -240,23 +240,23 @@
                                             <tbody>
                                             <tr>
                                                 <td>Euro</td>
-                                                <td></td>
+                                                <td th:text="${currency.getEur()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>British Pound</td>
-                                                <td></td>
+                                                <td th:text="${currency.getGbp()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Canadian Dollar</td>
-                                                <td></td>
+                                                <td th:text="${currency.getCad()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Japanese Yen</td>
-                                                <td></td>
+                                                <td th:text="${currency.getJpy()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Indian Rupee</td>
-                                                <td></td>
+                                                <td th:text="${currency.getInr()}"></td>
                                             </tr>
                                             </tbody>
                                         </table>
