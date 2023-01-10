@@ -178,6 +178,24 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoiceRepository.save(invoice);
     }
 
+
+    @Override
+    public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusOrderByInvoiceNoDesc(company, invoiceStatus);
+
+        return invoiceList.stream().map(invoice -> {
+
+            InvoiceDto invoiceDTO = mapperUtil.convert(invoice, new InvoiceDto());
+            invoiceDTO.setInvoiceProducts(invoiceProductService.findAllInvoiceProducts(invoice.getId()));
+            invoiceDTO.setTax(invoiceProductService.totalTax(invoice.getId()));
+            invoiceDTO.setPrice(invoiceProductService.totalPriceWithoutTax(invoice.getId()));
+            invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
+
+            return invoiceDTO;
+        }).collect(Collectors.toList());
+    }
+
 }
 
 
