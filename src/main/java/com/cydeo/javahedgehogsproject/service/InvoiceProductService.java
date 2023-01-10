@@ -31,7 +31,7 @@ public interface InvoiceProductService {
 
     void deleteSalesInvoiceProduct(Long invoiceProductId);
 
-    void reduceQuantityOfProduct(Long invoiceId);
+    boolean checkQuantityAmount(Long invoiceId);
 
     void calculateProfitLossForSale(Long invoiceId);
 

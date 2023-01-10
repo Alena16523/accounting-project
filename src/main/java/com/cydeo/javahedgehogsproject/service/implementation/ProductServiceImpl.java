@@ -52,18 +52,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void save(ProductDto productDto) {
         productDto.getCategory().setHasProduct(false);
-        productDto.setQuantityInStock(0);
         Product product = mapperUtil.convert(productDto, new Product());
         productRepository.save(product);
     }
 
     @Override
     public void update(ProductDto productDto) {
+        Product product = productRepository.findById(productDto.getId()).get();
 
-        Product product=productRepository.findById(productDto.getId()).get();
-        int quantityInStock=product.getQuantityInStock();
-
-        productDto.setQuantityInStock(quantityInStock);
+        productDto.setQuantityInStock(product.getQuantityInStock());
 
         Product product1 = productRepository.save(mapperUtil.convert(productDto, new Product()));
         mapperUtil.convert(product1, new ProductDto());
@@ -73,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> findAllProductsByCategoryId(Long id) {
 
-        List<Product> listOfProductsPerCategory=productRepository.findAllByCategoryId(id);
+        List<Product> listOfProductsPerCategory = productRepository.findAllByCategoryId(id);
 
         return listOfProductsPerCategory.stream().map(product -> mapperUtil.convert(product, new ProductDto())).collect(Collectors.toList());
     }
@@ -103,7 +100,8 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.save(mapperUtil.convert(productDto, new Product()));
         return mapperUtil.convert(product, new ProductDto());
     }
-    }
+
+}
 
 
 
