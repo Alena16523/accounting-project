@@ -129,7 +129,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
             for (InvoiceProduct eachInvoiceProduct : invoiceProducts) {
                 Product product = eachInvoiceProduct.getProduct();
                 product.setQuantityInStock(product.getQuantityInStock() + eachInvoiceProduct.getQuantity());
-
+                eachInvoiceProduct.setRemainingQty(eachInvoiceProduct.getQuantity()); // it's needed to calculate profit/loss
                 InvoiceProductDto invoiceProductDto = mapperUtil.convert(eachInvoiceProduct, new InvoiceProductDto());
 
                 invoiceProductRepository.save(mapperUtil.convert(invoiceProductDto, new InvoiceProduct()));
@@ -180,30 +180,90 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void reduceQuantityOfProduct(Long invoiceId) {
-        List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
-        List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
-                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
-                .collect(Collectors.toList());
-
-        for (InvoiceProductDto each : invoiceProductDtos) {
-            ProductDto productDto = productService.findById(each.getProduct().getId());
-
-            productDto.setQuantityInStock(productDto.getQuantityInStock() - each.getQuantity());
-
-            productService.save(productDto);
-        }
-
-    }
-
-    @Override
     public void calculateProfitLossForSale(Long invoiceId) {
-        // go to purchase invoice find the approved one
-        // check the product is matching with sale invoice
-        // then take the quantity amount that I want to sell
-        // and based on that quantity calculate the price (quantity*price+(quantity*price*tax/100))
-        // take that result subtract from the invoiceProduct total price
-        // and save it as profit/loss
+        CompanyDto currentCompany = securityService.getLoggedInCompany();
+
+        List<InvoiceProduct> salesInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
+        List<InvoiceProduct> purchaseInvoiceProducts = getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType.PURCHASE, currentCompany);
+
+        BigDecimal profitLoss = BigDecimal.ZERO;
+        for (InvoiceProduct sold : salesInvoiceProducts) { // each sales InvoiceProduct
+            sold.setRemainingQty(sold.getQuantity());
+
+            // calculate total price with tax for each sales InvoiceProduct
+            BigDecimal salesTotalPrice = sold.getPrice()
+                    .multiply(BigDecimal.valueOf(sold.getQuantity()))
+                    .multiply(sold.getTax())
+                    .divide(BigDecimal.valueOf(100))
+                    .add(sold.getPrice()
+                            .multiply(BigDecimal.valueOf(sold.getQuantity())));
+
+            BigDecimal purchaseTotalPrice = BigDecimal.ZERO;
+
+            for (InvoiceProduct purchased : purchaseInvoiceProducts) { // each purchase InvoiceProduct
+                // check the product matches
+                if (purchased.getProduct().getId().equals(sold.getProduct().getId()) && sold.getRemainingQty() > 0) {
+
+                    Product product = sold.getProduct(); // get the product from sale InvoiceProduct
+
+                    // if there is no InvoiceProduct left in purchase invoice to calculate, go to other purchase invoice
+                    if (purchased.getRemainingQty() == 0) {
+                        continue;
+                    }
+
+                    if (purchased.getRemainingQty() > sold.getRemainingQty()) { // calculate the price based on sales quantity
+                        purchaseTotalPrice = purchaseTotalPrice
+                                .add(purchased.getPrice()
+                                        .multiply(BigDecimal.valueOf(sold.getRemainingQty()))
+                                        .multiply(purchased.getTax())
+                                        .divide(BigDecimal.valueOf(100))
+                                        .add(purchased.getPrice()
+                                                .multiply(BigDecimal.valueOf(sold.getRemainingQty()))));
+
+                        product.setQuantityInStock(product.getQuantityInStock() - sold.getRemainingQty()); // decreasing product quantity
+
+                        purchased.setRemainingQty(purchased.getRemainingQty() - sold.getRemainingQty());
+                        sold.setRemainingQty(0);
+                        invoiceProductRepository.save(purchased);
+
+                    } else if (purchased.getRemainingQty() < sold.getRemainingQty()) {
+                        purchaseTotalPrice = purchaseTotalPrice
+                                .add(purchased.getPrice()
+                                        .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))
+                                        .multiply(purchased.getTax())
+                                        .divide(BigDecimal.valueOf(100))
+                                        .add(purchased.getPrice()
+                                                .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))));
+
+                        product.setQuantityInStock(product.getQuantityInStock() - purchased.getRemainingQty()); // decreasing product quantity
+
+                        sold.setRemainingQty(sold.getRemainingQty() - purchased.getRemainingQty()); // to check next purchase invoice product with this quantity amount
+                        purchased.setRemainingQty(0);
+                        invoiceProductRepository.save(purchased);
+
+                    } else { // when sales remaining quantity and purchase remaining quantity is equal
+                        purchaseTotalPrice = purchaseTotalPrice
+                                .add(purchased.getPrice()
+                                        .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))
+                                        .multiply(purchased.getTax())
+                                        .divide(BigDecimal.valueOf(100))
+                                        .add(purchased.getPrice()
+                                                .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))));
+
+                        product.setQuantityInStock(product.getQuantityInStock() - sold.getRemainingQty()); // decreasing product quantity
+
+                        purchased.setRemainingQty(0);
+                        sold.setRemainingQty(0);
+                        invoiceProductRepository.save(purchased);
+                    }
+                }
+            }
+
+            profitLoss = salesTotalPrice.subtract(purchaseTotalPrice);
+            sold.setProfitLoss(profitLoss);
+            invoiceProductRepository.save(sold);
+
+        }
     }
 
     @Override
@@ -211,6 +271,13 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return invoiceProductRepository
                 .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
                         InvoiceStatus.APPROVED, mapperUtil.convert(company, new Company()));
+    }
+
+    @Override
+    public List<InvoiceProduct> getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType invoiceType, CompanyDto company) {
+        return invoiceProductRepository
+                .findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyOrderByInvoice_DateAsc(
+                        InvoiceStatus.APPROVED, invoiceType, mapperUtil.convert(company, new Company()));
     }
 
     private BigDecimal calculate(InvoiceProductDto invoiceProductDto) {

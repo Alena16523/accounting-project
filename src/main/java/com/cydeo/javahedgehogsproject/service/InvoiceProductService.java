@@ -33,10 +33,10 @@ public interface InvoiceProductService {
 
     boolean checkQuantityAmount(Long invoiceId);
 
-    void reduceQuantityOfProduct(Long invoiceId);
-
     void calculateProfitLossForSale(Long invoiceId);
 
     List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company);
+
+    List<InvoiceProduct> getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType invoiceType, CompanyDto company);
 
 }
