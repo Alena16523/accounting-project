@@ -164,18 +164,13 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
 
         if (invoiceProductService.checkQuantityAmount(invoiceId)) {
-
-            invoiceProductService.reduceQuantityOfProduct(invoiceId);
             invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
             invoice.setDate(LocalDate.now());
             invoiceProductService.calculateProfitLossForSale(invoiceId);
             invoiceRepository.save(invoice);
-
         } else {
-
             InvoiceDto invoiceDto = mapperUtil.convert(invoice, new InvoiceDto());
             invoiceDto.setHasNotEnoughProductQuantity(true);
-
         }
 
     }
