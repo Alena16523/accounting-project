@@ -181,10 +181,9 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     @Override
     public void calculateProfitLossForSale(Long invoiceId) {
-        CompanyDto currentCompany = securityService.getLoggedInCompany();
+        Company currentCompany = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
 
         List<InvoiceProduct> salesInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
-        List<InvoiceProduct> purchaseInvoiceProducts = getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType.PURCHASE, currentCompany);
 
         BigDecimal profitLoss = BigDecimal.ZERO;
         for (InvoiceProduct sold : salesInvoiceProducts) { // each sales InvoiceProduct
@@ -198,13 +197,19 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                     .add(sold.getPrice()
                             .multiply(BigDecimal.valueOf(sold.getQuantity())));
 
+            Product product = sold.getProduct(); // get the product from sale InvoiceProduct
+            product.setQuantityInStock(product.getQuantityInStock() - sold.getQuantity()); // decreasing product quantity
+
+            // get the oldest approved purchase InvoiceProducts based on product_id
+            List<InvoiceProduct> purchaseInvoiceProducts =
+                    invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyAndProduct_IdOrderByInvoice_InvoiceNoAsc(
+                            InvoiceStatus.APPROVED, InvoiceType.PURCHASE, currentCompany, product.getId());
+
             BigDecimal purchaseTotalPrice = BigDecimal.ZERO;
 
             for (InvoiceProduct purchased : purchaseInvoiceProducts) { // each purchase InvoiceProduct
                 // check the product matches
                 if (purchased.getProduct().getId().equals(sold.getProduct().getId()) && sold.getRemainingQty() > 0) {
-
-                    Product product = sold.getProduct(); // get the product from sale InvoiceProduct
 
                     // if there is no InvoiceProduct left in purchase invoice to calculate, go to other purchase invoice
                     if (purchased.getRemainingQty() == 0) {
@@ -220,8 +225,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                                         .add(purchased.getPrice()
                                                 .multiply(BigDecimal.valueOf(sold.getRemainingQty()))));
 
-                        product.setQuantityInStock(product.getQuantityInStock() - sold.getRemainingQty()); // decreasing product quantity
-
                         purchased.setRemainingQty(purchased.getRemainingQty() - sold.getRemainingQty());
                         sold.setRemainingQty(0);
                         invoiceProductRepository.save(purchased);
@@ -235,8 +238,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                                         .add(purchased.getPrice()
                                                 .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))));
 
-                        product.setQuantityInStock(product.getQuantityInStock() - purchased.getRemainingQty()); // decreasing product quantity
-
                         sold.setRemainingQty(sold.getRemainingQty() - purchased.getRemainingQty()); // to check next purchase invoice product with this quantity amount
                         purchased.setRemainingQty(0);
                         invoiceProductRepository.save(purchased);
@@ -249,8 +250,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
                                         .divide(BigDecimal.valueOf(100))
                                         .add(purchased.getPrice()
                                                 .multiply(BigDecimal.valueOf(purchased.getRemainingQty()))));
-
-                        product.setQuantityInStock(product.getQuantityInStock() - sold.getRemainingQty()); // decreasing product quantity
 
                         purchased.setRemainingQty(0);
                         sold.setRemainingQty(0);
@@ -271,13 +270,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return invoiceProductRepository
                 .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
                         InvoiceStatus.APPROVED, mapperUtil.convert(company, new Company()));
-    }
-
-    @Override
-    public List<InvoiceProduct> getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType invoiceType, CompanyDto company) {
-        return invoiceProductRepository
-                .findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyOrderByInvoice_DateAsc(
-                        InvoiceStatus.APPROVED, invoiceType, mapperUtil.convert(company, new Company()));
     }
 
     private BigDecimal calculate(InvoiceProductDto invoiceProductDto) {

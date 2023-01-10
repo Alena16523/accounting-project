@@ -37,6 +37,4 @@ public interface InvoiceProductService {
 
     List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company);
 
-    List<InvoiceProduct> getAllApprovedInvoiceProductsByTypeAndCompany(InvoiceType invoiceType, CompanyDto company);
-
 }
