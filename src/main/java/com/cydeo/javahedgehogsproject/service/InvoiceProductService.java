@@ -15,8 +15,6 @@ public interface InvoiceProductService {
 
     List<InvoiceProductDto> findAllInvoiceProducts(Long invoiceId);
 
-    void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
-
     BigDecimal totalTax(Long invoiceId);
 
     BigDecimal totalPriceWithoutTax(Long invoiceId);
@@ -36,5 +34,9 @@ public interface InvoiceProductService {
     void calculateProfitLossForSale(Long invoiceId);
 
     List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company);
+
+    List<InvoiceProduct> findAllMonthlyProfitLoss();
+
+    void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
 
 }

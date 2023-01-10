@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface ReportingService {
 
-    Map<String, BigDecimal> profitLoss();
+    Map<String, BigDecimal> profitMonthlyLoss();
 
     List<InvoiceProductDto> getInvoiceProductsOfApprovedInvoices();
 

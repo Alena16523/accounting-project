@@ -62,22 +62,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto) {
-        //go to DB find that invoice:
-        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
-        //find all invoiceProducts belongs to that invoice:
-        List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
-        //delete one by one all invoiceProducts that we found base on the id:
-        listInvoiceProducts.forEach(invoiceProduct -> {
-            Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
-            if (foundInvoiceProduct.isPresent()) {
-                foundInvoiceProduct.get().setDeleted(true);
-                invoiceProductRepository.save(foundInvoiceProduct.get());
-            }
-        });
-    }
-
-    @Override
     public BigDecimal totalTax(Long invoiceId) {
         List<InvoiceProduct> invoiceProductList = invoiceProductRepository.findAllByInvoiceId(invoiceId);//from entity
 
@@ -207,6 +191,28 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         BigDecimal taxAmount = invoiceProductDto.getPrice().multiply(BigDecimal.valueOf(invoiceProductDto.getQuantity())).multiply(invoiceProductDto.getTax()).divide(new BigDecimal(100));
 
         return totalWithOutTax.add(taxAmount).setScale(2, RoundingMode.CEILING);
+    }
+
+    @Override
+    public List<InvoiceProduct> findAllMonthlyProfitLoss() {
+        Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
+        return invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyOrderByInvoice_DateDesc(InvoiceStatus.APPROVED, InvoiceType.SALES, company);
+    }
+
+    @Override
+    public void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto) {
+        //go to DB find that invoice:
+        Invoice invoice = mapperUtil.convert(invoiceDto, new Invoice());
+        //find all invoiceProducts belongs to that invoice:
+        List<InvoiceProduct> listInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoice.getId());
+        //delete one by one all invoiceProducts that we found base on the id:
+        listInvoiceProducts.forEach(invoiceProduct -> {
+            Optional<InvoiceProduct> foundInvoiceProduct = invoiceProductRepository.findById(invoiceProduct.getId());
+            if (foundInvoiceProduct.isPresent()) {
+                foundInvoiceProduct.get().setDeleted(true);
+                invoiceProductRepository.save(foundInvoiceProduct.get());
+            }
+        });
     }
 
 }

@@ -10,9 +10,9 @@ import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,11 +29,19 @@ public class ReportingServiceImpl implements ReportingService {
     }
 
     @Override
-    public Map<String, BigDecimal> profitLoss() {
-        Map<String, BigDecimal> profitLoss = new HashMap<>();
+    public Map<String, BigDecimal> profitMonthlyLoss() {
 
+        List<InvoiceProduct> salesInvoiceProductList = invoiceProductService.findAllMonthlyProfitLoss();
+        Map<String, BigDecimal> monthlyProfitLossMap = new TreeMap<>();
 
-        return profitLoss;
+        for (InvoiceProduct each : salesInvoiceProductList ) {
+            String month = each.getInvoice().getDate().getMonth().toString();
+            int year = each.getInvoice().getDate().getYear();
+            String key = String.valueOf(month) +" " + String.valueOf(year);
+            monthlyProfitLossMap.put(key, each.getProfitLoss());
+            monthlyProfitLossMap.put(key, monthlyProfitLossMap.getOrDefault(key, BigDecimal.ZERO).add(each.getProfitLoss()));
+        }
+        return monthlyProfitLossMap;
     }
 
     @Override

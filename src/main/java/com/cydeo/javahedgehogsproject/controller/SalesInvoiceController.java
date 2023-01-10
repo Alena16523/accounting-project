@@ -84,15 +84,15 @@ public class SalesInvoiceController {
         return "invoice/sales-invoice-update";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteSalesInvoices(@PathVariable("id") Long id) {
-        invoiceService.delete(id);
-        return "redirect:/salesInvoices/list";
-    }
-
     @GetMapping("/approve/{id}")
     public String approveSalesInvoice(@PathVariable("id") Long invoiceId) {
         invoiceService.approveSalesInvoice(invoiceId);
+        return "redirect:/salesInvoices/list";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteSalesInvoices(@PathVariable("id") Long id) {
+        invoiceService.delete(id);
         return "redirect:/salesInvoices/list";
     }
 
