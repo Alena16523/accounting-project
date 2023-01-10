@@ -1,14 +1,25 @@
 package com.cydeo.javahedgehogsproject.controller;
 
-import org.springframework.stereotype.Controller;
+import com.cydeo.javahedgehogsproject.client.CurrencyClient;
+import com.cydeo.javahedgehogsproject.service.DashboardService;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class DashboardController {
+    private final CurrencyClient currencyClient;
+    private final DashboardService dashboardService;
+
+    public DashboardController(CurrencyClient currencyClient, DashboardService dashboardService) {
+        this.currencyClient = currencyClient;
+        this.dashboardService = dashboardService;
+    }
+
 
     @GetMapping("/dashboard")
     public String navigateToDashboard(Model model) throws Exception {
+        model.addAttribute("currencies", dashboardService.getCurrencies());
         return "dashboard";
     }
 
