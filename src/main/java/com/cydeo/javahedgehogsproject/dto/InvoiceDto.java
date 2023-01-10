@@ -7,6 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +27,8 @@ public class InvoiceDto {
     @DateTimeFormat(pattern = "MMMM dd, yyyy")
     private LocalDate date;
     private CompanyDto company;
+    @Valid
+    @NotNull
     private ClientVendorDto clientVendor;
     private BigDecimal price;
     private BigDecimal tax;

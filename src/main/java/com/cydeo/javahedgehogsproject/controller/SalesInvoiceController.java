@@ -8,10 +8,13 @@ import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.ProductService;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/salesInvoices")
@@ -44,7 +47,11 @@ public class SalesInvoiceController {
     }
 
     @PostMapping("/create")
-    public String saveSalesInvoice(@ModelAttribute("newSalesInvoice") InvoiceDto invoiceDto) {
+    public String saveSalesInvoice(@Valid @ModelAttribute("newSalesInvoice") InvoiceDto invoiceDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("clients", clientVendorService.findAllClients());
+            return "/invoice/sales-invoice-create";
+        }
         InvoiceDto invoiceDtoId = invoiceService.save(invoiceDto);
 
         return "redirect:/salesInvoices/update/" + invoiceDtoId.getId();
