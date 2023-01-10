@@ -239,24 +239,24 @@
                                             </thead>
                                             <tbody  >
                                             <tr>
-                                                <td th:each="currency:${currencies}">Euro</td>
-                                                <td th:text="${currency.usd.eur}"></td>
+                                                <td>Euro</td>
+                                                <td th:text="${currency.getEur()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>British Pound</td>
-                                                <td th:text="${currency.getUsd().getGbp()}"></td>
+                                                <td th:text="${currency.getGbp()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Canadian Dollar</td>
-                                                <td></td>
+                                                <td th:text="${currency.getCad()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Japanese Yen</td>
-                                                <td></td>
+                                                <td th:text="${currency.getJpy()}"></td>
                                             </tr>
                                             <tr>
                                                 <td>Indian Rupee</td>
-                                                <td></td>
+                                                <td th:text="${currency.getInr()}"></td>
                                             </tr>
                                             </tbody>
                                         </table>

@@ -2,10 +2,12 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.client.CurrencyClient;
 import com.cydeo.javahedgehogsproject.dto.Currency;
+import com.cydeo.javahedgehogsproject.dto.Usd;
 import com.cydeo.javahedgehogsproject.service.DashboardService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -16,8 +18,8 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<Currency> getCurrencies() {
-        List<Currency> currencies = currencyClient.getCurrencies();
-        return currencies;
+    public Usd getCurrency() {
+        Currency currencies = currencyClient.getCurrencies();
+        return currencies.getUsd();
     }
 }

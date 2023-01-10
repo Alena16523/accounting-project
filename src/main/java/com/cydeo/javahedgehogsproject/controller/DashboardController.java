@@ -19,7 +19,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String navigateToDashboard(Model model) throws Exception {
-        model.addAttribute("currencies", dashboardService.getCurrencies());
+        model.addAttribute("currency", dashboardService.getCurrency());
         return "dashboard";
     }
 
