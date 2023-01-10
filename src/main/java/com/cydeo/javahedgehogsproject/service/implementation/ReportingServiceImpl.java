@@ -38,7 +38,6 @@ public class ReportingServiceImpl implements ReportingService {
             String month = each.getInvoice().getDate().getMonth().toString();
             int year = each.getInvoice().getDate().getYear();
             String key = String.valueOf(month) +" " + String.valueOf(year);
-            monthlyProfitLossMap.put(key, each.getProfitLoss());
             monthlyProfitLossMap.put(key, monthlyProfitLossMap.getOrDefault(key, BigDecimal.ZERO).add(each.getProfitLoss()));
         }
         return monthlyProfitLossMap;
