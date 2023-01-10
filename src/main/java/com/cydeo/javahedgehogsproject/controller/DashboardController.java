@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DashboardController {
-    private final CurrencyClient currencyClient;
     private final DashboardService dashboardService;
 
-    public DashboardController(CurrencyClient currencyClient, DashboardService dashboardService) {
-        this.currencyClient = currencyClient;
+    public DashboardController(DashboardService dashboardService) {
+
         this.dashboardService = dashboardService;
     }
 
