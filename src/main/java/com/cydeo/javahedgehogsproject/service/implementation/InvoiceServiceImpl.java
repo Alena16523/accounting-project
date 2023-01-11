@@ -62,7 +62,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         String InvoiceNo = "";
 
         if (invoiceType.getValue().equals("Purchase")) {
-            InvoiceNo = "P-" + "00" + (id + 1);
+            InvoiceNo = String.format("P-%03d", (id + 1));
         }
 
         return InvoiceNo;
@@ -75,7 +75,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         String saleInvoiceNo = "";
 
         if (invoiceType.getValue().equals("Sales")) {
-            saleInvoiceNo = "S-" + "00" + (id + 1);
+            saleInvoiceNo = String.format("S-%03d", (id + 1));
         }
 
         return saleInvoiceNo;
