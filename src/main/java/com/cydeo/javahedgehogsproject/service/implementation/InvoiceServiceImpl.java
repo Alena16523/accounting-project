@@ -2,8 +2,6 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
-import com.cydeo.javahedgehogsproject.entity.BaseEntity;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
@@ -136,7 +134,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findById(id).get();
         invoice.setDeleted(true);
         invoiceRepository.save(invoice);
-        invoiceProductService.deleteByInvoice(InvoiceType.PURCHASE,mapperUtil.convert(invoice, new InvoiceDto()));
+        invoiceProductService.deleteByInvoice(InvoiceType.PURCHASE, mapperUtil.convert(invoice, new InvoiceDto()));
     }
 
     @Override
@@ -185,7 +183,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
     }
-
 
     @Override
     public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {

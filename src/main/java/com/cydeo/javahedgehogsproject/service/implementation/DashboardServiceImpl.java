@@ -4,11 +4,8 @@ import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.client.CurrencyClient;
-import com.cydeo.javahedgehogsproject.dto.Currency;
-import com.cydeo.javahedgehogsproject.dto.Usd;
-import com.cydeo.javahedgehogsproject.client.CurrencyClient;
-import com.cydeo.javahedgehogsproject.dto.Currency;
-import com.cydeo.javahedgehogsproject.dto.Usd;
+import com.cydeo.javahedgehogsproject.dto.CurrencyDto;
+import com.cydeo.javahedgehogsproject.dto.UsdDto;
 import com.cydeo.javahedgehogsproject.service.DashboardService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
 import org.springframework.stereotype.Service;
@@ -16,9 +13,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -33,8 +27,8 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public Usd getCurrency() {
-        Currency currencies = currencyClient.getCurrencies();
+    public UsdDto getCurrency() {
+        CurrencyDto currencies = currencyClient.getCurrencies();
         return currencies.getUsd();
     }
 

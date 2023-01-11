@@ -3,8 +3,6 @@ package com.cydeo.javahedgehogsproject.controller;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
-import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
-import com.cydeo.javahedgehogsproject.repository.InvoiceRepository;
 import com.cydeo.javahedgehogsproject.service.ClientVendorService;
 import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
@@ -26,16 +24,12 @@ public class PurchaseInvoiceController {
 
     private final InvoiceService invoiceService;
     private final ClientVendorService clientVendorService;
-    private final InvoiceRepository invoiceRepository;
-    private final MapperUtil mapperUtil;
     private final ProductService productService;
     private final InvoiceProductService invoiceProductService;
 
-    public PurchaseInvoiceController(InvoiceService invoiceService, ClientVendorService clientVendorService, InvoiceRepository invoiceRepository, MapperUtil mapperUtil, ProductService productService, InvoiceProductService invoiceProductService) {
+    public PurchaseInvoiceController(InvoiceService invoiceService, ClientVendorService clientVendorService, ProductService productService, InvoiceProductService invoiceProductService) {
         this.invoiceService = invoiceService;
         this.clientVendorService = clientVendorService;
-        this.invoiceRepository = invoiceRepository;
-        this.mapperUtil = mapperUtil;
         this.productService = productService;
         this.invoiceProductService = invoiceProductService;
     }
@@ -87,13 +81,13 @@ public class PurchaseInvoiceController {
 
     @PostMapping("/addInvoiceProduct/{invoiceId}")
     public String createInvoiceProduct(@PathVariable("invoiceId") Long invoiceId, @Valid @ModelAttribute("newInvoiceProduct") InvoiceProductDto invoiceProduct, BindingResult bindingResult, Model model) {
-       if (bindingResult.hasErrors()){
-           model.addAttribute("invoice", invoiceService.findById(invoiceId));
-           model.addAttribute("vendors", clientVendorService.findAllVendors());
-           model.addAttribute("products", productService.listAllProducts());
-           model.addAttribute("invoiceProducts", invoiceProductService.findAllById(invoiceId));
-           return "/invoice/purchase-invoice-update";
-       }
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("invoice", invoiceService.findById(invoiceId));
+            model.addAttribute("vendors", clientVendorService.findAllVendors());
+            model.addAttribute("products", productService.listAllProducts());
+            model.addAttribute("invoiceProducts", invoiceProductService.findAllById(invoiceId));
+            return "/invoice/purchase-invoice-update";
+        }
         invoiceProductService.savePurchaseProductByInvoiceId(invoiceProduct, invoiceId);
         return "redirect:/purchaseInvoices/update/" + invoiceId;
     }
@@ -105,17 +99,16 @@ public class PurchaseInvoiceController {
     }
 
     @GetMapping("/approve/{id}")
-    public String approvePurchaseInvoice(@PathVariable("id") Long purchaseInvoiceId){
+    public String approvePurchaseInvoice(@PathVariable("id") Long purchaseInvoiceId) {
 
-       invoiceService.approvePurchaseInvoice(purchaseInvoiceId);
+        invoiceService.approvePurchaseInvoice(purchaseInvoiceId);
 
-       return "redirect:/purchaseInvoices/list";
+        return "redirect:/purchaseInvoices/list";
     }
 
 
-
     @GetMapping("/delete/{id}")
-    public String deletePurchaseInvoices(@PathVariable("id")Long id) {
+    public String deletePurchaseInvoices(@PathVariable("id") Long id) {
 
         invoiceService.deletePurchaseInvoice(id);
 

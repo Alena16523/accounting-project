@@ -22,7 +22,7 @@ import lombok.ToString;
         "jpy"
 })
 @Generated("jsonschema2pojo")
-public class Usd {
+public class UsdDto {
 
     @JsonProperty("eur")
     private Double eur;

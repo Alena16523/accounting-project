@@ -89,10 +89,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         InvoiceProduct invProduct = mapperUtil.convert(invoiceProduct, new InvoiceProduct());
         invProduct.setProfitLoss(new BigDecimal(0));
         invProduct.setInvoice(mapperUtil.convert(invoice, new Invoice()));
-        invoice.setPrice(invoiceProduct.getPrice());
-        BigDecimal tax = invoiceProduct.getPrice().multiply(invoiceProduct.getTax());
-        invoice.setTax(tax);
-        invoice.setTotal(invoiceProduct.getTotal());
         invoiceProductRepository.save(invProduct);
     }
 
@@ -100,8 +96,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     public void deletePurchaseProduct(Long productId) {
         InvoiceProduct invoiceProduct = invoiceProductRepository.findById(productId).get();
         invoiceProduct.setDeleted(true);
-        invoiceProduct.setPrice(new BigDecimal(0));
-        invoiceProduct.setTax(new BigDecimal(0));
 
         invoiceProductRepository.save(invoiceProduct);
     }

@@ -3,7 +3,6 @@ package com.cydeo.javahedgehogsproject.dto;
 import lombok.*;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 

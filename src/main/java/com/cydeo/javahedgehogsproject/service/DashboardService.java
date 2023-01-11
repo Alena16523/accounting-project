@@ -3,9 +3,7 @@ package com.cydeo.javahedgehogsproject.service;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.cydeo.javahedgehogsproject.dto.Usd;
-
-import com.cydeo.javahedgehogsproject.dto.Usd;
+import com.cydeo.javahedgehogsproject.dto.UsdDto;
 
 public interface DashboardService {
 
@@ -14,6 +12,6 @@ public interface DashboardService {
      BigDecimal calculateTotalSales();
      BigDecimal calculateProfitLoss();
 
-    Usd getCurrency();
+    UsdDto getCurrency();
 
 }
