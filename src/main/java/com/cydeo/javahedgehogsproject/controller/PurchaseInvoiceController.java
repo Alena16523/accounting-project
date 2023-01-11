@@ -52,8 +52,11 @@ public class PurchaseInvoiceController {
     }
 
     @PostMapping("/create")
-    public String createNewPurchaseInvoice(@ModelAttribute("newPurchaseInvoice") InvoiceDto newPurchaseInvoice) {
-
+    public String createNewPurchaseInvoice(@Valid @ModelAttribute("newPurchaseInvoice") InvoiceDto newPurchaseInvoice, BindingResult bindingResult, Model model) {
+       if(bindingResult.hasErrors()){
+           model.addAttribute("vendors", clientVendorService.findAllVendors());
+           return "/invoice/purchase-invoice-create";
+       }
         invoiceService.savePurchaseInvoice(newPurchaseInvoice);
 
         return "redirect:/purchaseInvoices/update/" + newPurchaseInvoice.getId();

@@ -56,13 +56,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public String InvoiceNo(InvoiceType invoiceType, Long companyId) {
+    public String generateInvoiceNoForPurchase(InvoiceType invoiceType, Long companyId) {
 
         Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
         String InvoiceNo = "";
 
         if (invoiceType.getValue().equals("Purchase")) {
-            InvoiceNo = "P-" + "00" + (id + 1);
+            InvoiceNo = "P-" +  String.format("%03d", id + 1);
         }
 
         return InvoiceNo;
@@ -85,7 +85,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDto getNewInvoice(InvoiceType invoiceType) {
         Long companyId = securityService.getLoggedInUser().getCompany().getId();
         Invoice invoice = new Invoice();
-        invoice.setInvoiceNo(InvoiceNo(invoiceType, companyId));
+        invoice.setInvoiceNo(generateInvoiceNoForPurchase(invoiceType, companyId));
         invoice.setDate(LocalDate.now());
         return mapperUtil.convert(invoice, new InvoiceDto());
     }
