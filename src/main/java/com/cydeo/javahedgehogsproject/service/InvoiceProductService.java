@@ -39,4 +39,5 @@ public interface InvoiceProductService {
 
     void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
 
+    InvoiceProductDto findById(Long id);
 }

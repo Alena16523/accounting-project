@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface InvoiceService {
 
-    InvoiceDto findById(long id);
+    InvoiceDto findById(Long id);
 
     List<InvoiceDto> findAllInvoice(InvoiceType invoiceType);
 

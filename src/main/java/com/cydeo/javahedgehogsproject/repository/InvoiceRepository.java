@@ -12,11 +12,13 @@ import java.util.List;
 @Repository
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
+    Invoice findByIdAndIsDeleted(Long id, boolean deleted);
+
     Long countAllByInvoiceTypeAndCompanyId(InvoiceType invoiceType, Long companyId);
 
-    List<Invoice> findInvoicesByCompanyAndInvoiceTypeOrderByInvoiceNoDesc(Company company, InvoiceType invoiceType);
+    List<Invoice> findInvoicesByCompanyAndInvoiceTypeAndIsDeletedOrderByInvoiceNoDesc(Company company, InvoiceType invoiceType, boolean deleted);
 
-    List<Invoice> findInvoicesByCompanyAndInvoiceStatusOrderByInvoiceNoDesc(Company company, InvoiceStatus invoiceStatus);
+    List<Invoice> findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByInvoiceNoDesc(Company company, InvoiceStatus invoiceStatus, boolean deleted);
 
     List<Invoice> findInvoicesByCompanyAndInvoiceTypeAndInvoiceStatus(Company company, InvoiceType invoiceType, InvoiceStatus invoiceStatus);
 
