@@ -2,6 +2,8 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.entity.BaseEntity;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
