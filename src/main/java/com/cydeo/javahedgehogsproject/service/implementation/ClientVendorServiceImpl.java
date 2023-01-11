@@ -93,7 +93,6 @@ public class ClientVendorServiceImpl implements ClientVendorService {
     }
 
 
-
     @Override
     public boolean checkIfThereIsAnyClientVendorWithSameNameAndType(String name, ClientVendorType type) {
         return clientVendorRepository.findAllByCompany(mapperUtil.convert(securityService.getLoggedInCompany(), new Company()))

@@ -27,11 +27,13 @@ public interface InvoiceService {
     void update(InvoiceDto invoice);
 
     void delete(Long id);
+
     void deletePurchaseInvoice(Long id);
 
     void approvePurchaseInvoice(Long purchaseInvoiceId);
 
     void approveSalesInvoice(Long invoiceId);
+
     List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus);
 
 
