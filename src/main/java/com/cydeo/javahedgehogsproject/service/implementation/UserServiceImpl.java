@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
     public void deleteById(Long id) {
         User user = userRepository.findById(id).get();
 
-        user.setDeleted(true);
+        user.setIsDeleted(true);
         user.setUsername(user.getUsername() + "-" + user.getId()
                 + user.getCompany().getId()
                 + user.getRole().getId());
