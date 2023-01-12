@@ -79,7 +79,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         String saleInvoiceNo = "";
 
         if (invoiceType.getValue().equals("Sales")) {
-            saleInvoiceNo = String.format("S-%03d", (id + 1));
+
+            saleInvoiceNo = "S-" + String.format("%03d", id + 1);
+
         }
 
         return saleInvoiceNo;
