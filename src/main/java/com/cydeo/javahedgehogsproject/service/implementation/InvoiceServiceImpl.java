@@ -17,6 +17,7 @@ import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         String saleInvoiceNo = "";
 
         if (invoiceType.getValue().equals("Sales")) {
-            saleInvoiceNo = "S-" + "00" + (id + 1);
+            saleInvoiceNo = String.format("S-%03d", (id + 1));
         }
 
         return saleInvoiceNo;
@@ -203,7 +204,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByInvoiceNoDesc(company, invoiceStatus, false);
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByLastUpdateDateTimeDesc (company, invoiceStatus, false);
 
         return invoiceList.stream().map(invoice -> {
 
@@ -214,7 +215,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             invoiceDTO.setTotal(invoiceDTO.getTax().add(invoiceDTO.getPrice()));
 
             return invoiceDTO;
-        }).collect(Collectors.toList());
+        }).limit(3).sorted(Comparator.comparing(InvoiceDto::getInvoiceNo).reversed()).collect(Collectors.toList());
     }
 
 }
