@@ -22,5 +22,6 @@ public interface InvoiceProductRepository extends JpaRepository<InvoiceProduct, 
 
     List<InvoiceProduct> findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyOrderByInvoice_DateDesc(InvoiceStatus invoiceStatus, InvoiceType invoiceType, Company company);
 
+    List<InvoiceProduct> findAllByInvoice_Company_Id(Long companyId);
 
 }

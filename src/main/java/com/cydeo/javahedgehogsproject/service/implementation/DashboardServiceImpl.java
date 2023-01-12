@@ -1,17 +1,20 @@
 package com.cydeo.javahedgehogsproject.service.implementation;
 
-import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.*;
+import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.client.CurrencyClient;
-import com.cydeo.javahedgehogsproject.dto.CurrencyDto;
-import com.cydeo.javahedgehogsproject.dto.UsdDto;
+import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.service.DashboardService;
+import com.cydeo.javahedgehogsproject.service.InvoiceProductService;
 import com.cydeo.javahedgehogsproject.service.InvoiceService;
+import com.cydeo.javahedgehogsproject.service.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,11 +22,16 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final InvoiceService invoiceService;
     private final CurrencyClient currencyClient;
+    private final  InvoiceProductService invoiceProductService;
+    private final SecurityService securityService;
+    private final InvoiceProductRepository invoiceProductRepository;
 
-    public DashboardServiceImpl(InvoiceService invoiceService, CurrencyClient currencyClient) {
-
+    public DashboardServiceImpl(InvoiceService invoiceService, CurrencyClient currencyClient, InvoiceProductService invoiceProductService, SecurityService securityService, InvoiceProductRepository invoiceProductRepository) {
         this.invoiceService = invoiceService;
         this.currencyClient = currencyClient;
+        this.invoiceProductService = invoiceProductService;
+        this.securityService = securityService;
+        this.invoiceProductRepository = invoiceProductRepository;
     }
 
     @Override
@@ -65,9 +73,15 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public BigDecimal calculateProfitLoss() {
 
-        BigDecimal profitLoss=calculateTotalSales().subtract(calculateTotalCost());
+        BigDecimal profitLoss = BigDecimal.ZERO;
+       CompanyDto company= securityService.getLoggedInCompany();
 
-        return profitLoss;
+        List<InvoiceProduct> listOfProductsEntity=invoiceProductRepository.findAllByInvoice_Company_Id(company.getId());
+
+        for (InvoiceProduct invoiceProduct : listOfProductsEntity) {
+            profitLoss = profitLoss.add(invoiceProduct.getProfitLoss());
+        }
+        return  profitLoss;
     }
 
 }
