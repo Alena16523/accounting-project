@@ -33,15 +33,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDto findById(long id) {
-        Invoice invoice = invoiceRepository.findById(id).orElseThrow();
-        return mapperUtil.convert(invoice, new InvoiceDto());
+    public InvoiceDto findById(Long id) {
+//        Invoice invoice = invoiceRepository.findById(id).orElseThrow();
+        return mapperUtil.convert(invoiceRepository.findByIdAndIsDeleted(id, false), new InvoiceDto());
     }
 
     @Override
     public List<InvoiceDto> findAllInvoice(InvoiceType invoiceType) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceTypeOrderByInvoiceNoDesc(company, invoiceType);
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceTypeAndIsDeletedOrderByInvoiceNoDesc(company, invoiceType, false);
 
         return invoiceList.stream().map(invoice -> {
 
@@ -56,13 +56,13 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public String InvoiceNo(InvoiceType invoiceType, Long companyId) {
+    public String generateInvoiceNoForPurchase(InvoiceType invoiceType, Long companyId) {
 
         Long id = invoiceRepository.countAllByInvoiceTypeAndCompanyId(invoiceType, companyId);
         String InvoiceNo = "";
 
         if (invoiceType.getValue().equals("Purchase")) {
-            InvoiceNo = String.format("P-%03d", (id + 1));
+            InvoiceNo = "P-" +  String.format("%03d", id + 1);
         }
 
         return InvoiceNo;
@@ -85,7 +85,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceDto getNewInvoice(InvoiceType invoiceType) {
         Long companyId = securityService.getLoggedInUser().getCompany().getId();
         Invoice invoice = new Invoice();
-        invoice.setInvoiceNo(InvoiceNo(invoiceType, companyId));
+        invoice.setInvoiceNo(generateInvoiceNoForPurchase(invoiceType, companyId));
         invoice.setDate(LocalDate.now());
         return mapperUtil.convert(invoice, new InvoiceDto());
     }
@@ -131,15 +131,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void deletePurchaseInvoice(Long id) {
 
-        Invoice invoice = invoiceRepository.findById(id).get();
-        invoice.setDeleted(true);
+        Invoice invoice = invoiceRepository.findByIdAndIsDeleted(id, false);
+        invoice.setIsDeleted(true);
         invoiceRepository.save(invoice);
         invoiceProductService.deleteByInvoice(InvoiceType.PURCHASE, mapperUtil.convert(invoice, new InvoiceDto()));
     }
 
     @Override
     public void update(InvoiceDto invoice) {
-        Invoice dbInvoice = invoiceRepository.findById(invoice.getId()).get();
+        Invoice dbInvoice = invoiceRepository.findByIdAndIsDeleted(invoice.getId(), false);
         Invoice convertedInvoice = mapperUtil.convert(invoice, new Invoice());
         convertedInvoice.setId(dbInvoice.getId());
         convertedInvoice.setInvoiceStatus(dbInvoice.getInvoiceStatus());
@@ -150,8 +150,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void delete(Long id) {
-        Invoice invoice = invoiceRepository.findById(id).get();
-        invoice.setDeleted(true);
+        Invoice invoice = invoiceRepository.findByIdAndIsDeleted(id, false);
+        invoice.setIsDeleted(true);
         invoiceRepository.save(invoice);
         //delete all invoiceProducts belongs to the deleted invoice:
         invoiceProductService.deleteByInvoice(InvoiceType.SALES, mapperUtil.convert(invoice, new InvoiceDto()));
@@ -160,7 +160,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void approvePurchaseInvoice(Long purchaseInvoiceId) {
 
-        Invoice invoice = invoiceRepository.findById(purchaseInvoiceId).get();
+        Invoice invoice = invoiceRepository.findByIdAndIsDeleted(purchaseInvoiceId, false);
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
         invoice.setDate(LocalDate.now());
         invoiceProductService.approvePurchaseInvoice(purchaseInvoiceId);
@@ -170,7 +170,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public void approveSalesInvoice(Long invoiceId) {
-        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow();
+        Invoice invoice = invoiceRepository.findByIdAndIsDeleted(invoiceId, false);
 
         if (invoiceProductService.checkQuantityAmount(invoiceId)) {
             invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
@@ -187,7 +187,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusOrderByInvoiceNoDesc(company, invoiceStatus);
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByInvoiceNoDesc(company, invoiceStatus, false);
 
         return invoiceList.stream().map(invoice -> {
 

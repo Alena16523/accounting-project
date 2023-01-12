@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-@Where(clause = "is_deleted=false")
+//@Where(clause = "is_deleted=false")
 public class Invoice extends BaseEntity{
 
     private String invoiceNo;

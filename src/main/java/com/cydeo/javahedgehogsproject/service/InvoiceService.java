@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface InvoiceService {
 
-    InvoiceDto findById(long id);
+    InvoiceDto findById(Long id);
 
     List<InvoiceDto> findAllInvoice(InvoiceType invoiceType);
 
-    String InvoiceNo(InvoiceType invoiceType, Long companyId);
+    String generateInvoiceNoForPurchase(InvoiceType invoiceType, Long companyId);
 
     String createInvoiceNoForSalesInvoice(InvoiceType invoiceType, Long companyId);
 
