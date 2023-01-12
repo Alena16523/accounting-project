@@ -2,8 +2,11 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
+import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
+import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
+import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -160,10 +163,23 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void approvePurchaseInvoice(Long purchaseInvoiceId) {
 
+        CompanyDto companyDto=securityService.getLoggedInCompany();
+
         Invoice invoice = invoiceRepository.findByIdAndIsDeleted(purchaseInvoiceId, false);
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
         invoice.setDate(LocalDate.now());
         invoiceProductService.approvePurchaseInvoice(purchaseInvoiceId);
+
+        //set invoiceProduct field profit loss
+//        List<InvoiceProductDto> listOfProductsDto=invoiceProductService.findAllInvoiceProducts(companyDto.getId());
+//        listOfProductsDto.stream().map(product->{
+//            InvoiceProduct invoiceProduct=mapperUtil.convert(product, new InvoiceProduct());
+//            invoiceProduct.setProfitLoss(invoiceProductService.calculateProfitLossForSale());
+//
+//        });
+
+
+
         invoiceRepository.save(invoice);
 
     }
