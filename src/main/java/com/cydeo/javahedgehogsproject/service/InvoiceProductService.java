@@ -29,7 +29,7 @@ public interface InvoiceProductService {
 
     void deleteSalesInvoiceProduct(Long invoiceProductId);
 
-    boolean checkQuantityAmount(Long invoiceId);
+    boolean checkProductQuantityAmountInStock(Long invoiceId);
 
     void calculateProfitLossForSale(Long invoiceId);
 
@@ -40,4 +40,5 @@ public interface InvoiceProductService {
     void deleteByInvoice(InvoiceType invoiceType, InvoiceDto invoiceDto);
 
     InvoiceProductDto findById(Long id);
+
 }

@@ -191,14 +191,14 @@ public class InvoiceServiceImpl implements InvoiceService {
     public void approveSalesInvoice(Long invoiceId) {
         Invoice invoice = invoiceRepository.findByIdAndIsDeleted(invoiceId, false);
 
-        if (invoiceProductService.checkQuantityAmount(invoiceId)) {
+        if (invoiceProductService.checkProductQuantityAmountInStock(invoiceId)) {
             invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
             invoice.setDate(LocalDate.now());
             invoiceProductService.calculateProfitLossForSale(invoiceId);
             invoiceRepository.save(invoice);
         } else {
             InvoiceDto invoiceDto = mapperUtil.convert(invoice, new InvoiceDto());
-            invoiceDto.setHasNotEnoughProductQuantity(true);
+            invoiceDto.setDisabledToApprove(true);
         }
 
     }
