@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -137,7 +136,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public boolean checkProductQuantityAmountInStock(Long invoiceId) {
+    public boolean hasEnoughProductQuantityInStock(Long invoiceId) {
         List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
         List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
                 .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
@@ -192,7 +191,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     @Override
     public List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company) {
         return invoiceProductRepository
-                .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_DateDesc(
+                .findAllByInvoice_InvoiceStatusAndInvoice_CompanyOrderByInvoice_LastUpdateDateTimeDesc(
                         InvoiceStatus.APPROVED, mapperUtil.convert(company, new Company()));
     }
 
@@ -241,7 +240,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
     private List<InvoiceProduct> getAllPurchasedInvoiceProductsByProduct(Long product_id) {
         Company currentCompany = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        return invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyAndProduct_IdOrderByInvoice_InvoiceNoAscIdAsc(
+        return invoiceProductRepository.findAllByInvoice_InvoiceStatusAndInvoice_InvoiceTypeAndInvoice_CompanyAndProduct_IdOrderByInvoice_IdAscIdAsc(
                 InvoiceStatus.APPROVED, InvoiceType.PURCHASE, currentCompany, product_id);
     }
 

@@ -2,11 +2,8 @@ package com.cydeo.javahedgehogsproject.service.implementation;
 
 import com.cydeo.javahedgehogsproject.dto.CompanyDto;
 import com.cydeo.javahedgehogsproject.dto.InvoiceDto;
-import com.cydeo.javahedgehogsproject.dto.InvoiceProductDto;
-import com.cydeo.javahedgehogsproject.dto.ProductDto;
 import com.cydeo.javahedgehogsproject.entity.Company;
 import com.cydeo.javahedgehogsproject.entity.Invoice;
-import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.enums.InvoiceStatus;
 import com.cydeo.javahedgehogsproject.enums.InvoiceType;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
@@ -190,23 +187,16 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public void approveSalesInvoice(Long invoiceId) {
         Invoice invoice = invoiceRepository.findByIdAndIsDeleted(invoiceId, false);
-
-        if (invoiceProductService.checkProductQuantityAmountInStock(invoiceId)) {
-            invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
-            invoice.setDate(LocalDate.now());
-            invoiceProductService.calculateProfitLossForSale(invoiceId);
-            invoiceRepository.save(invoice);
-        } else {
-            InvoiceDto invoiceDto = mapperUtil.convert(invoice, new InvoiceDto());
-            invoiceDto.setDisabledToApprove(true);
-        }
-
+        invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
+        invoice.setDate(LocalDate.now());
+        invoiceProductService.calculateProfitLossForSale(invoiceId);
+        invoiceRepository.save(invoice);
     }
 
     @Override
     public List<InvoiceDto> findAllApprovedInvoice(InvoiceStatus invoiceStatus) {
         Company company = mapperUtil.convert(securityService.getLoggedInCompany(), new Company());
-        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByLastUpdateDateTimeDesc (company, invoiceStatus, false);
+        List<Invoice> invoiceList = invoiceRepository.findInvoicesByCompanyAndInvoiceStatusAndIsDeletedOrderByLastUpdateDateTimeDesc(company, invoiceStatus, false);
 
         return invoiceList.stream().map(invoice -> {
 

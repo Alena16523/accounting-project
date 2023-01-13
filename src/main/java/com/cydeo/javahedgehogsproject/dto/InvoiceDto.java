@@ -32,6 +32,5 @@ public class InvoiceDto {
     private BigDecimal tax;
     private BigDecimal total;
     private List<InvoiceProductDto> invoiceProducts;
-    private boolean disabledToApprove;
 
 }
