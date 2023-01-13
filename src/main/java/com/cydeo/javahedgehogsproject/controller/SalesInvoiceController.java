@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -101,7 +102,14 @@ public class SalesInvoiceController {
 
 
     @GetMapping("/approve/{id}")
-    public String approveSalesInvoice(@PathVariable("id") Long invoiceId) {
+    public String approveSalesInvoice(@PathVariable("id") Long invoiceId, RedirectAttributes redirectAttributes) {
+        if (!invoiceProductService.hasEnoughProductQuantityInStock(invoiceId)) {
+            redirectAttributes.addFlashAttribute("message", "This sale can NOT be approved! Low stock!");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/salesInvoices/list";
+        }
+        redirectAttributes.addFlashAttribute("message", "This sale is successfully approved!");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         invoiceService.approveSalesInvoice(invoiceId);
         return "redirect:/salesInvoices/list";
     }
