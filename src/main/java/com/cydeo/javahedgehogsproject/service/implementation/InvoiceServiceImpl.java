@@ -189,7 +189,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         Invoice invoice = invoiceRepository.findByIdAndIsDeleted(invoiceId, false);
         invoice.setInvoiceStatus(InvoiceStatus.APPROVED);
         invoice.setDate(LocalDate.now());
-        invoiceProductService.calculateProfitLossForSale(invoiceId);
+        invoiceProductService.calculateProfitLossForSoldInvoiceProduct(invoiceId);
         invoiceRepository.save(invoice);
     }
 

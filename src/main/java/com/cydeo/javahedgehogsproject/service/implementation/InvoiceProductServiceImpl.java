@@ -153,7 +153,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     }
 
     @Override
-    public void calculateProfitLossForSale(Long invoiceId) {
+    public void calculateProfitLossForSoldInvoiceProduct(Long invoiceId) {
         List<InvoiceProduct> salesInvoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
         for (InvoiceProduct saleProduct : salesInvoiceProducts) {
             saleProduct.setRemainingQty(saleProduct.getQuantity());

@@ -31,7 +31,7 @@ public interface InvoiceProductService {
 
     boolean hasEnoughProductQuantityInStock(Long invoiceId);
 
-    void calculateProfitLossForSale(Long invoiceId);
+    void calculateProfitLossForSoldInvoiceProduct(Long invoiceId);
 
     List<InvoiceProduct> getAllApprovedInvoiceProductsByCompany(CompanyDto company);
 
