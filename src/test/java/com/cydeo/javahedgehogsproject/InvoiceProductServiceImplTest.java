@@ -5,6 +5,9 @@ import com.cydeo.javahedgehogsproject.entity.InvoiceProduct;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.InvoiceProductRepository;
 import com.cydeo.javahedgehogsproject.service.implementation.InvoiceProductServiceImpl;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,6 +48,10 @@ private InvoiceProductServiceImpl invoiceProductServiceImpl;
         given(mapperUtil.convert(Mockito.any(InvoiceProduct.class), Mockito.any(InvoiceProductDto.class))).willReturn(invoiceProductDto);
         List<InvoiceProductDto> invoiceProductDtos=invoiceProductServiceImpl.findAllInvoiceProducts(2L);
         assertThat(invoiceProductDtos).isNotNull();
+        BigDecimal expectedPrice = (new BigDecimal(20));
+        BigDecimal actualPrice= invoiceProductDtos.get(0).getPrice();
+
+        assertEquals(expectedPrice, actualPrice);
 
     }
 
