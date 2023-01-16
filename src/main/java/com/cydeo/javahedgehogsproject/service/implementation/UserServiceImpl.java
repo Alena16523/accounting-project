@@ -6,6 +6,7 @@ import com.cydeo.javahedgehogsproject.entity.User;
 import com.cydeo.javahedgehogsproject.mapper.MapperUtil;
 import com.cydeo.javahedgehogsproject.repository.UserRepository;
 import com.cydeo.javahedgehogsproject.service.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MapperUtil mapperUtil;
     private final SecurityService securityService;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, SecurityService securityService) {
+    public UserServiceImpl(UserRepository userRepository, MapperUtil mapperUtil, SecurityService securityService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.mapperUtil = mapperUtil;
         this.securityService = securityService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -68,6 +71,7 @@ public class UserServiceImpl implements UserService {
 
         User obj = mapperUtil.convert(user, new User());
         obj.setEnabled(true);
+        obj.setPassword(passwordEncoder.encode(obj.getPassword()));
         userRepository.save(obj);
 
     }
