@@ -103,7 +103,8 @@ public class SalesInvoiceController {
 
     @GetMapping("/approve/{id}")
     public String approveSalesInvoice(@PathVariable("id") Long invoiceId, RedirectAttributes redirectAttributes) {
-        if (!invoiceProductService.hasEnoughProductQuantityInStock(invoiceId)) {
+        boolean checkStock = invoiceProductService.hasEnoughProductQuantityInStock(invoiceId);
+        if (!checkStock) {
             redirectAttributes.addFlashAttribute("message", "This sale can NOT be approved! Low stock!");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
             return "redirect:/salesInvoices/list";

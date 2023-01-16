@@ -138,18 +138,14 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     @Override
     public boolean hasEnoughProductQuantityInStock(Long invoiceId) {
         List<InvoiceProduct> invoiceProducts = invoiceProductRepository.findAllByInvoiceId(invoiceId);
-        List<InvoiceProductDto> invoiceProductDtos = invoiceProducts.stream()
-                .map(invoiceProduct -> mapperUtil.convert(invoiceProduct, new InvoiceProductDto()))
-                .collect(Collectors.toList());
-
-        for (InvoiceProductDto each : invoiceProductDtos) {
-            ProductDto productDto = productService.findById(each.getProduct().getId());
-
-            if (productDto.getQuantityInStock() < each.getQuantity()) {
-                return false;
+        boolean enoughStock = true;
+        for (InvoiceProduct each : invoiceProducts) {
+            if (each.getProduct().getQuantityInStock() < each.getQuantity()) {
+                enoughStock = false;
             }
+            reduceAmountOfProductQuantityInStock(each.getProduct(), each.getQuantity());
         }
-        return true;
+        return enoughStock;
     }
 
     @Override
@@ -158,7 +154,6 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         for (InvoiceProduct saleProduct : salesInvoiceProducts) {
             saleProduct.setRemainingQty(saleProduct.getQuantity());
             BigDecimal salesInvoiceProductPrice = calculatePriceOfProductWithTax(saleProduct.getPrice(), saleProduct.getQuantity(), saleProduct.getTax());
-            reduceAmountOfProductQuantityInStock(saleProduct.getProduct(), saleProduct.getQuantity());
 
             List<InvoiceProduct> purchaseInvoiceProducts = getAllPurchasedInvoiceProductsByProduct(saleProduct.getProduct().getId());
             BigDecimal purchaseInvoiceProductPrice = BigDecimal.ZERO;
