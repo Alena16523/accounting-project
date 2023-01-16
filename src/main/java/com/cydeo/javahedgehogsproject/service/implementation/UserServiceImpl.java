@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
 
         User obj = mapperUtil.convert(user, new User());
         obj.setEnabled(true);
-        obj.setPassword(passwordEncoder.encode(user.getPassword()));
+        obj.setPassword(passwordEncoder.encode(obj.getPassword()));
         userRepository.save(obj);
 
     }
